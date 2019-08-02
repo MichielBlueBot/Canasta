@@ -1,10 +1,4 @@
-from typing import List, TYPE_CHECKING, Optional
-
-from base.card import Card
-from base.card_constants import POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, POSSIBLE_RANK
-from base.cards.card_series import CardSeries
-from base.enums.pile_side import PileSide
-from base.enums.two_swap_direction import TwoSwapDirection
+from typing import List
 
 from base.actions.action import Action
 from base.actions.add_back_action import AddBackAction
@@ -12,10 +6,15 @@ from base.actions.add_front_action import AddFrontAction
 from base.actions.discard_card_action import DiscardCardAction
 from base.actions.put_action import PutAction
 from base.actions.swap_joker_action import SwapJokerAction
-from base.actions.take_card_action import TakeCardAction
 from base.actions.swap_two_action import SwapTwoAction
+from base.actions.take_card_action import TakeCardAction
 from base.actions.take_pile_action import TakePileAction
 from base.actions.take_stack_action import TakeStackAction
+from base.card import Card
+from base.enums.pile_side import PileSide
+from base.enums.two_swap_direction import TwoSwapDirection
+from base.utils.card_constants import POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, POSSIBLE_RANK
+from base.utils.generators import series_generator
 
 
 def get_take_card_actions() -> List['Action']:
@@ -80,39 +79,6 @@ def get_add_back_actions() -> List['Action']:
         add_back_options = series.get_add_back_options()
         for option in add_back_options:
             yield AddBackAction(card=option, series=series)
-
-
-def series_generator(min_length: int = 1, max_length: Optional[int] = None):
-    """
-    Generate all possible CardSeries with length in range(min_length, max_length + 1).
-    """
-    for suit in POSSIBLE_SUIT:
-        yield from suit_series_generator(suit, min_length=min_length, max_length=max_length)
-
-
-def suit_series_generator(suit: str, min_length: int = 1, max_length: Optional[int] = None):
-    """
-    Generate all possible CardSeries in the given suit with length in range(min_length, max_length + 1).
-    """
-    for ranks in ranks_list_generator(min_length=min_length, max_length=max_length):
-        original_series = [Card(rank, suit) for rank in ranks]
-        yield CardSeries(original_series)
-        for i in range(len(original_series)):
-            yield CardSeries(original_series[:i] + [Card(JOKER_RANK, JOKER_SUIT)] + original_series[i+1:])
-        for possible_suit in POSSIBLE_SUIT:
-            for i in range(len(original_series)):
-                yield CardSeries(original_series[:i] + [Card(2, possible_suit)] + original_series[i+1:])
-
-
-def ranks_list_generator(min_length: int, max_length: Optional[int]):
-    """Generate lists of all possible CardSeries ranks."""
-    ranks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1]
-    max_length = max_length or len(ranks) - 1
-    for length in range(min_length, max_length + 1):
-        for i in range(0, len(ranks) - length + 1):
-            yield ranks[i:i+length]
-    if max_length == len(ranks):
-        yield ranks
 
 
 ALL_ACTIONS = (list(get_take_card_actions()) +
