@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 
 from base.card import Card
-from base.card_constants import POSSIBLE_SUIT, POSSIBLE_RANK, JOKER_SUIT, JOKER_RANK
+from base.utils.card_constants import POSSIBLE_SUIT, POSSIBLE_RANK, JOKER_SUIT, JOKER_RANK
 
 
 class CardEncoder:

@@ -1,5 +1,5 @@
 from typing import Union
-from base.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION, \
+from base.utils.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION, \
     RANK_TRANSLATION_SHORT
 
 """This module provides the :class:`Card` object.

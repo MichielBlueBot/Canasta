@@ -17,10 +17,18 @@ class Player:
         self.hand = None  # type: Optional[Hand]
         self.identifier = identifier
         self.team = None
+        self._pile_grabbed = False
 
     @property
     def team_color(self):
         return self.team.color
+
+    def set_pile_grabbed(self):
+        self.team.set_pile_grabbed()
+        self._pile_grabbed = True
+
+    def has_grabbed_pile(self):
+        return self._pile_grabbed
 
     def play(self, game_state: 'GameState'):
         while not game_state.board.phase == GamePhase.END_TURN_PHASE:
