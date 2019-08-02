@@ -40,6 +40,7 @@ class TakePileAction(Action):
     def _execute(self, player: 'Player', board: 'Board'):
         pile_cards = board.grab_pile(self.side)
         player.hand.add(pile_cards)
+        player.set_pile_grabbed()
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if board.phase == GamePhase.NO_CARDS_END_TURN_PHASE:
