@@ -43,3 +43,5 @@ class TakePileAction(Action):
         else:
             return GamePhase.ACTION_PHASE
 
+    def __str__(self):
+        return "TakePile {}".format(self.side.value)

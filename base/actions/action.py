@@ -32,4 +32,4 @@ class Action(metaclass=ABCMeta):
         if not self.validate(player=player, board=board):
             raise Exception("Invalid action. \n {} \n {} \n {}".format(self, player, board))
         self._execute(player, board)
-        board.set_phase(self._target_phase())
+        board.set_phase(self._target_phase(player=player, board=board))

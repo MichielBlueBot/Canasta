@@ -31,3 +31,6 @@ class DiscardCardAction(Action):
         if player.hand.is_empty():
             return GamePhase.NO_CARDS_END_TURN_PHASE
         return GamePhase.END_TURN_PHASE
+
+    def __str__(self):
+        return "Discard {}".format(self.card)

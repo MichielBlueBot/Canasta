@@ -51,3 +51,6 @@ class SwapTwoAction(Action):
         if player.hand.is_empty():
             return GamePhase.NO_CARDS_PHASE
         return GamePhase.ACTION_PHASE
+
+    def __str__(self):
+        return "SwapTwo ({}) {}  >>>  {}".format(self.direction.value, self.card, self.series)

@@ -21,3 +21,6 @@ class TakeStackAction(Action):
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         return GamePhase.ACTION_PHASE
+
+    def __str__(self):
+        return "TakeStack"

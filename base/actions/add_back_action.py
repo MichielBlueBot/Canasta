@@ -47,3 +47,6 @@ class AddBackAction(Action):
         if player.hand.is_empty():
             return GamePhase.NO_CARDS_PHASE
         return GamePhase.ACTION_PHASE
+
+    def __str__(self):
+        return "AddBack {}  <<<  {}".format(self.series, self.card)

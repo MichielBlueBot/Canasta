@@ -42,3 +42,6 @@ class SwapJokerAction(Action):
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         return GamePhase.PLAY_JOKER_PHASE
+
+    def __str__(self):
+        return "SwapJoker {}  >>>  {}".format(self.card, self.series)
