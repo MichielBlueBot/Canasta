@@ -18,6 +18,10 @@ class SwapTwoAction(Action):
         self.series = series
         self.direction = direction
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return self.card, self.series, self.direction
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         if board.phase != GamePhase.ACTION_PHASE:
@@ -54,18 +58,3 @@ class SwapTwoAction(Action):
 
     def __str__(self):
         return "SwapTwo ({}) {}  >>>  {}".format(self.direction.value, self.card, self.series)
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.card == other.card and self.series == other.series and self.direction == other.direction:
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)

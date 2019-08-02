@@ -142,15 +142,20 @@ class Card(object):
         """
         return 2 == self.get_rank()
 
+    def __key(self):
+        return self._rank, self._suit
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def __eq__(self, other) -> bool:
         """Override equality method
         :returns: True if two objects are cards and have the same :attr:`_rank` and :attr:`_suit`
         :rtype: bool
         """
         if type(other) is type(self):
-            if (other.get_rank() == self.get_rank()) and (other.get_suit() == self.get_suit()):
+            if self.__key() == other.__key():
                 return True
-
         return False
 
     def __ne__(self, other) -> bool:

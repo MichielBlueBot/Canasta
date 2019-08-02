@@ -16,6 +16,10 @@ class TakePileAction(Action):
         super().__init__()
         self.side = side
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return self.side
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         if board.phase not in [GamePhase.NO_CARDS_PHASE, GamePhase.NO_CARDS_END_TURN_PHASE]:
@@ -45,18 +49,3 @@ class TakePileAction(Action):
 
     def __str__(self):
         return "TakePile {}".format(self.side.value)
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.side == other.side:
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)

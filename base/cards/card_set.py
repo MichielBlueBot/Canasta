@@ -26,6 +26,9 @@ class CardSet(metaclass=ABCMeta):
     def num_cards(self):
         return len(self._cards)
 
+    def get_raw_cards(self):
+        return self._cards
+
     def __repr__(self):
         repr_str = '{} ['.format(self.description())
         for card in sorted(self._cards):

@@ -17,6 +17,10 @@ class PutAction(Action):
         super().__init__()
         self.series = CardSeries(cards)
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return self.series
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         if board.phase not in [GamePhase.ACTION_PHASE, GamePhase.PLAY_JOKER_PHASE]:
@@ -50,18 +54,3 @@ class PutAction(Action):
 
     def __str__(self):
         return "Put {}".format(self.series)
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.series == other.series:
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)

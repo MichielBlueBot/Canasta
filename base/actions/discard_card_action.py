@@ -14,6 +14,10 @@ class DiscardCardAction(Action):
     def __init__(self, card: Card):
         self.card = card
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return self.card
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         if board.phase != GamePhase.ACTION_PHASE:
@@ -34,18 +38,3 @@ class DiscardCardAction(Action):
 
     def __str__(self):
         return "Discard {}".format(self.card)
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.card == other.card:
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)

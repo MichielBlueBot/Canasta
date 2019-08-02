@@ -11,9 +11,6 @@ class CardSeries(CardSet):
     def description(self) -> str:
         return "CardSeries"
 
-    def get_raw_cards(self) -> List[Card]:
-        return self._cards
-
     def get_card(self, index: int) -> Card:
         return self._cards[index]
 
@@ -266,14 +263,19 @@ class CardSeries(CardSet):
             return True
         return all(first == rest for rest in iterator)
 
+    def __key(self):
+        return self.get_raw_cards()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def __eq__(self, other) -> bool:
         """Override equality method
-        :returns: True if two objects are series and have the same :attr:`_cards`
+        :returns: True if two objects are cards and have the same :attr:`_rank` and :attr:`_suit`
         :rtype: bool
         """
         if type(other) is type(self):
-            other = other  # type: 'CardSeries'
-            if self.get_raw_cards() == other.get_raw_cards():
+            if self.__key() == other.__key():
                 return True
         return False
 

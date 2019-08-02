@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 class Action(metaclass=ABCMeta):
 
     @abstractmethod
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        raise NotImplementedError
+
+    @abstractmethod
     def validate(self, player: 'Player', board: 'Board'):
         raise NotImplementedError
 
@@ -36,3 +41,23 @@ class Action(metaclass=ABCMeta):
 
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :returns: True if two objects are cards and have the same :attr:`_rank` and :attr:`_suit`
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            if self.__key() == other.__key():
+                return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :returns: not :attr:`__eq__`
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__key())

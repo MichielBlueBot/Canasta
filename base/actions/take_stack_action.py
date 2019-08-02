@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 class TakeStackAction(Action):
     """ Take the stack and add the cards to the players hand. """
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return None
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         return board.phase == GamePhase.DRAW_PHASE
@@ -24,17 +28,3 @@ class TakeStackAction(Action):
 
     def __str__(self):
         return "TakeStack"
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)

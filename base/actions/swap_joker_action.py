@@ -16,6 +16,10 @@ class SwapJokerAction(Action):
         self.card = card
         self.series = series
 
+    def __key(self):
+        """Return a tuple of all fields that should be checked in equality and hashing operations."""
+        return self.card, self.series
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         if board.phase != GamePhase.ACTION_PHASE:
@@ -45,18 +49,3 @@ class SwapJokerAction(Action):
 
     def __str__(self):
         return "SwapJoker {}  >>>  {}".format(self.card, self.series)
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.card == other.card and self.series == other.series:
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :rtype: bool
-        """
-        return not self.__eq__(other)
