@@ -2,8 +2,8 @@ from random import choice
 from typing import Optional, TYPE_CHECKING
 
 from base.actions.action_list import ALL_ACTIONS
-from base.actions.discard_card_action import DiscardCardAction
 from base.cards.hand import Hand
+from base.enums.game_phase import GamePhase
 from base.team import Team
 
 if TYPE_CHECKING:
@@ -23,14 +23,16 @@ class Player:
         return self.team.color
 
     def play(self, game_state: 'GameState'):
-        action = None
-        while not isinstance(action, DiscardCardAction):
+        while not game_state.board.phase == GamePhase.END_TURN_PHASE:
             action = self._choose_action(game_state)
+            print("Executing {}".format(action))
             action.execute(self, game_state.board)
 
     def _choose_action(self, game_state: 'GameState') -> 'Action':
-        action = choice(ALL_ACTIONS)
-        #TODO
+        eligible_actions = [action for action in ALL_ACTIONS if action.validate(player=self, board=game_state.board)]
+        for action in eligible_actions:
+            print(action)
+        action = choice(eligible_actions)
         return action
 
     def deal(self, hand: Hand):
@@ -43,7 +45,7 @@ class Player:
         return self.__str__()
 
     def __str__(self):
-        print_str = str(self.identifier) + " " + self.team_color + "\n"
+        print_str = str(self.identifier) + " " + self.team_color.value + "\n"
         print_str += str(self.hand)
         return print_str
 

@@ -5,6 +5,7 @@ from base.cards.deck import Deck
 from base.cards.double_deck import DoubleDeck
 from base.cards.hand import Hand
 from base.cards.stack import Stack
+from base.enums.game_phase import GamePhase
 from base.game_state import GameState
 from base.player import Player
 from base.team import Team
@@ -29,9 +30,15 @@ class Game:
         self._deal_hands(deck)
         # Set up board (deck and piles)
         self._initialize_board(deck)
+        # Set up the initial stack (one card from deck)
+        self._initialize_board_stack()
+        # Set up game phase
+        self._initialize_game_phase()
 
     def play(self):
         while not self._is_finished():
+            self.print()
+            print("Current player: {}".format(self.current_player))
             self.players[self.current_player].play(GameState(self.board, self.players))
             self._next_player_turn()
 
@@ -40,13 +47,14 @@ class Game:
         self.current_player %= 4
         self.current_team += 1
         self.current_team %= 2
+        self.board.set_phase(GamePhase.DRAW_PHASE)
 
     def _is_finished(self):
         if self.board.deck.is_empty() and self.board.num_piles_remaining() == 0:
             # No cards left to play
             return True
         for player in self.players:
-            if player.empty_hand():
+            if player.hand.is_empty() and player.team.has_grabbed_pile() and self.board.team_has_pure(player.team):
                 # Player finished the game
                 return True
         return False
@@ -81,6 +89,14 @@ class Game:
         left_pile_cards = Stack(deck.deal_n(11))
         right_pile_cards = Stack(deck.deal_n(11))
         self.board = Board(deck=deck, left_pile=left_pile_cards, right_pile=right_pile_cards)
+
+    def _initialize_board_stack(self):
+        # Deal 1 card onto the stack
+        card = self.board.deck.deal()
+        self.board.stack.put(card)
+
+    def _initialize_game_phase(self):
+        self.board.phase = GamePhase.DRAW_PHASE
 
     def print(self):
         if self.players is not None:

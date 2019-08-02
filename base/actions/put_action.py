@@ -50,3 +50,18 @@ class PutAction(Action):
 
     def __str__(self):
         return "Put {}".format(self.series)
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            if self.series == other.series:
+                return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :rtype: bool
+        """
+        return not self.__eq__(other)

@@ -77,6 +77,7 @@ class Board:
         print_str += "Left pile: {}".format(self.left_pile_active()) + "\n"
         print_str += "Right pile: {}".format(self.right_pile_active()) + "\n"
         print_str += "Deck: {} cards left".format(self.deck.num_cards()) + "\n"
+        print_str += "{}".format(self.stack) + "\n"
         print_str += "------------------------------------------------" + "\n"
         print_str += "RED TEAM:" + "\n"
         for card_set in self.red_team_series:

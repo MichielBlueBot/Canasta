@@ -34,3 +34,18 @@ class DiscardCardAction(Action):
 
     def __str__(self):
         return "Discard {}".format(self.card)
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            if self.card == other.card:
+                return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :rtype: bool
+        """
+        return not self.__eq__(other)

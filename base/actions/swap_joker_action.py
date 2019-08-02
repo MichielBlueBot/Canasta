@@ -45,3 +45,18 @@ class SwapJokerAction(Action):
 
     def __str__(self):
         return "SwapJoker {}  >>>  {}".format(self.card, self.series)
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            if self.card == other.card and self.series == other.series:
+                return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :rtype: bool
+        """
+        return not self.__eq__(other)

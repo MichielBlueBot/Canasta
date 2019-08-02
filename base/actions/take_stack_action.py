@@ -24,3 +24,17 @@ class TakeStackAction(Action):
 
     def __str__(self):
         return "TakeStack"
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :rtype: bool
+        """
+        return not self.__eq__(other)

@@ -33,3 +33,6 @@ class Action(metaclass=ABCMeta):
             raise Exception("Invalid action. \n {} \n {} \n {}".format(self, player, board))
         self._execute(player, board)
         board.set_phase(self._target_phase(player=player, board=board))
+
+    def __repr__(self):
+        return self.__str__()

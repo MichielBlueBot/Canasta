@@ -1,6 +1,6 @@
 from typing import Union
-from base.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION
-
+from base.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION, \
+    RANK_TRANSLATION_SHORT
 
 """This module provides the :class:`Card` object.
 This module also has 5 constant attributes that help validate or string format
@@ -63,6 +63,19 @@ class Card(object):
         else:
             return self.get_rank()
 
+    def _translate_rank_short(self) -> Union[int, str]:
+        """This is a hidden method that changes the card rank to a short
+        human-readable string.
+        :returns: human-readable string for face cards or card rank
+        :rtype: str
+        """
+        if self.is_joker():
+            return "Joker"
+        elif self.get_rank() in RANK_TRANSLATION_SHORT:
+            return RANK_TRANSLATION_SHORT[self.get_rank()]
+        else:
+            return self.get_rank()
+
     def __repr__(self) -> str:
         """This method returns an unambigious string representation of the card object
         :returns: unambigious string representation of card object
@@ -71,6 +84,18 @@ class Card(object):
         return "Card(_rank=%s, _suit=%s)" % (self.get_rank(), self.get_suit())
 
     def __str__(self) -> str:
+        """This method returns a short string representation of the card object
+        useful in printing card object as "%s"
+        :returns: human readable string representation of card object
+        :rtype: str
+        """
+        translated_rank = self._translate_rank_short()
+        if self.is_joker():
+            return translated_rank
+        else:
+            return "%s-%s" % (translated_rank, self._suit[0].upper())
+
+    def print(self):
         """This method returns a nice string representation of the card object
         useful in printing card object as "%s"
         :returns: human readable string representation of card object

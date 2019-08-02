@@ -17,3 +17,10 @@ RANK_TRANSLATION = {
     12: 'queen',
     13: 'king',
 }
+
+RANK_TRANSLATION_SHORT = {
+    1: 'A',
+    11: 'J',
+    12: 'Q',
+    13: 'K',
+}
