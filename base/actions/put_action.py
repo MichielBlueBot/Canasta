@@ -17,7 +17,7 @@ class PutAction(Action):
         super().__init__()
         self.series = CardSeries(cards)
 
-    def __key(self):
+    def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.series
 

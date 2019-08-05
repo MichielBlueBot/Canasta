@@ -142,11 +142,11 @@ class Card(object):
         """
         return 2 == self.get_rank()
 
-    def __key(self):
+    def _key(self):
         return self._rank, self._suit
 
     def __hash__(self):
-        return hash(self.__key())
+        return hash(self._key())
 
     def __eq__(self, other) -> bool:
         """Override equality method
@@ -154,7 +154,7 @@ class Card(object):
         :rtype: bool
         """
         if type(other) is type(self):
-            if self.__key() == other.__key():
+            if self._key() == other._key():
                 return True
         return False
 

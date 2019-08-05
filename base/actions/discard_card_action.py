@@ -14,7 +14,7 @@ class DiscardCardAction(Action):
     def __init__(self, card: Card):
         self.card = card
 
-    def __key(self):
+    def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.card
 

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class TakeStackAction(Action):
     """ Take the stack and add the cards to the players hand. """
 
-    def __key(self):
+    def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return None
 

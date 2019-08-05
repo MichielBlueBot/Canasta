@@ -44,3 +44,26 @@ class CardSet(metaclass=ABCMeta):
         str_str = str_str[:-2]
         str_str += "\n]"
         return str_str
+
+    def _key(self):
+        return tuple(self._cards)
+
+    def __hash__(self):
+        return hash(self._key())
+
+    def __eq__(self, other) -> bool:
+        """Override equality method
+        :returns: True if two objects are cards and have the same :attr:`_rank` and :attr:`_suit`
+        :rtype: bool
+        """
+        if type(other) is type(self):
+            if self._key() == other._key():
+                return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        """Override inequality method
+        :returns: not :attr:`__eq__`
+        :rtype: bool
+        """
+        return not self.__eq__(other)

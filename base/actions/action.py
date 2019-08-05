@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Action(metaclass=ABCMeta):
 
     @abstractmethod
-    def __key(self):
+    def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         raise NotImplementedError
 
@@ -48,7 +48,7 @@ class Action(metaclass=ABCMeta):
         :rtype: bool
         """
         if type(other) is type(self):
-            if self.__key() == other.__key():
+            if self._key() == other._key():
                 return True
         return False
 
@@ -60,4 +60,4 @@ class Action(metaclass=ABCMeta):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.__key())
+        return hash(self._key())

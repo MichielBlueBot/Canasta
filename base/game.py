@@ -39,8 +39,11 @@ class Game:
         while not self._is_finished():
             self.print()
             print("Current player: {}".format(self.current_player))
-            self.players[self.current_player].play(GameState(self.board, self.players))
+            self.players[self.current_player].play(self.get_state())
             self._next_player_turn()
+
+    def get_state(self):
+        return GameState(self.board, self.players)
 
     def _next_player_turn(self):
         self.current_player += 1

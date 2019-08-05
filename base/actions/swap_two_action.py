@@ -18,7 +18,7 @@ class SwapTwoAction(Action):
         self.series = series
         self.direction = direction
 
-    def __key(self):
+    def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.card, self.series, self.direction
 

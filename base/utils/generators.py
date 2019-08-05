@@ -22,7 +22,7 @@ def suit_series_generator(suit: str, min_length: int = 1, max_length: Optional[i
         yield CardSeries(original_series)
         for i in range(len(original_series)):
             yield CardSeries(original_series[:i] + [Card(JOKER_RANK, JOKER_SUIT)] + original_series[i+1:])
-        for possible_suit in POSSIBLE_SUIT:
+        for possible_suit in (set(POSSIBLE_SUIT) - {suit}):
             for i in range(len(original_series)):
                 yield CardSeries(original_series[:i] + [Card(2, possible_suit)] + original_series[i+1:])
 

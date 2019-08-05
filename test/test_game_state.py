@@ -11,7 +11,7 @@ class TestGamePhase(TestCase):
         self.game.initialize_game()
 
     def test_none_phase(self):
-        self.game.phase = None
+        self.game.board.phase = None
         validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player],
                                                                   board=self.game.board)]
         self.assertEqual(0, len(validated_actions))

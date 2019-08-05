@@ -263,29 +263,6 @@ class CardSeries(CardSet):
             return True
         return all(first == rest for rest in iterator)
 
-    def __key(self):
-        return self.get_raw_cards()
-
-    def __hash__(self):
-        return hash(self.__key())
-
-    def __eq__(self, other) -> bool:
-        """Override equality method
-        :returns: True if two objects are cards and have the same :attr:`_rank` and :attr:`_suit`
-        :rtype: bool
-        """
-        if type(other) is type(self):
-            if self.__key() == other.__key():
-                return True
-        return False
-
-    def __ne__(self, other) -> bool:
-        """Override inequality method
-        :returns: not :attr:`__eq__`
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
     def __repr__(self):
         repr_str = '{} ['.format(self.description())
         for card in self._cards:
