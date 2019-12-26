@@ -51,7 +51,10 @@ class Game:
             raise Exception("Game not initialized")
         while not self._is_finished():
             self._check_game_closed()
-            self.draw()
+            if Constants.DRAW_PYGAME_UI:
+                self.draw()
+            else:
+                self.print()
             print("Current player: {}".format(self.current_player))
             self.players[self.current_player].play(self.get_state())
             self._next_player_turn()
@@ -77,9 +80,10 @@ class Game:
                 quit()
 
     def _initialize_pygame(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode(Constants.SCREEN_SIZE)
-        pygame.display.set_caption("Canasta")
+        if Constants.DRAW_PYGAME_UI:
+            pygame.init()
+            self.screen = pygame.display.set_mode(Constants.SCREEN_SIZE)
+            pygame.display.set_caption("Canasta")
 
     def _next_player_turn(self) -> None:
         """Increment the player and team counters to indicate it's now the next players turn."""
