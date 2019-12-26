@@ -4,6 +4,7 @@ from base.card import Card
 from base.cards.card_series import CardSeries
 from base.cards.deck import Deck
 from base.cards.stack import Stack
+from base.drawable import Drawable
 from base.enums.game_phase import GamePhase
 from base.enums.pile_side import PileSide
 from base.player import Player
@@ -11,7 +12,7 @@ from base.team import Team
 from base.enums.team_color import TeamColor
 
 
-class Board:
+class Board(Drawable):
 
     def __init__(self, deck: Deck, left_pile: Stack, right_pile):
         self.phase = None
@@ -21,6 +22,9 @@ class Board:
         self.stack = Stack()
         self.red_team_series = []  # type: List[CardSeries]
         self.blue_team_series = []  # type: List[CardSeries]
+
+    def draw(self, screen) -> None:
+        screen.fill((0, 0, 0))
 
     def set_phase(self, phase: GamePhase):
         self.phase = phase
