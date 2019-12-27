@@ -9,7 +9,7 @@ from base.player import Player
 
 class GameState:
     """
-    The full game state that is visible to each player.
+    The full current state of the game.
     The game state contains all necessary information for a player to determine the next action.
     """
 
@@ -18,6 +18,11 @@ class GameState:
         self.players = players
 
     def create_numeral_representation(self, player: Player) -> List[int]:
+        """
+        Create a numerical representation of (a subset of) the game state for the specified player.
+
+        This representation only contains information that is accessible to the specified player.
+        """
         representation = []
         representation.extend(self._own_player_index_representation(player=player))
         representation.extend(self._player_hand_representation(player=player))

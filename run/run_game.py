@@ -1,10 +1,7 @@
-from base.actions.action_list import ALL_ACTIONS
-from base.game import Game
+from run.game_runner import GameRunner
 
 if __name__ == '__main__':
-    game = Game()
+    game_runner = GameRunner()
+    game_id, game = game_runner.start_game()
     game.initialize_game()
     game.play()
-    # state = game.get_state()
-    # print(len(state.create_numeral_representation(game.players[0])))
-    # print(len(ALL_ACTIONS))
