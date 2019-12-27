@@ -53,7 +53,7 @@ class Game:
 
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""
-        return GameState(self.board, self.players)
+        return GameState(self.board, self.players, self.current_player)
 
     def _next_player_turn(self) -> None:
         """Increment the player and team counters to indicate it's now the next players turn."""

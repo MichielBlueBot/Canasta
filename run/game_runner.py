@@ -16,6 +16,7 @@ class GameRunner(metaclass=Singleton):
     def start_game(self) -> Tuple[str, Game]:
         game_id = self.generate_new_game_id()
         game = Game()
+        game.initialize_game()
         self.running_games[game_id] = game
         return game_id, game
 

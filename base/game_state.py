@@ -13,9 +13,10 @@ class GameState:
     The game state contains all necessary information for a player to determine the next action.
     """
 
-    def __init__(self, board: Board, players: List[Player]):
+    def __init__(self, board: Board, players: List[Player], current_player_index: int):
         self.board = board
         self.players = players
+        self.current_player_index = current_player_index
 
     def create_numeral_representation(self, player: Player) -> List[int]:
         """
