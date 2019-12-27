@@ -1,7 +1,5 @@
 from typing import List, Optional
 
-import pygame
-
 from base.ai.ai_player import AIPlayer
 from base.board import Board
 from base.cards.deck import Deck
@@ -42,19 +40,13 @@ class Game:
         self._initialize_board_stack()
         # Set up game phase
         self.board.set_phase(GamePhase.DRAW_PHASE)
-        # Initialize pygame for drawing
-        self._initialize_pygame()
         self.initialized = True
 
     def play(self):
         if not self.initialized:
             raise Exception("Game not initialized")
         while not self._is_finished():
-            self._check_game_closed()
-            if Constants.DRAW_PYGAME_UI:
-                self.draw()
-            else:
-                self.print()
+            self.print()
             print("Current player: {}".format(self.current_player))
             self.players[self.current_player].play(self.get_state())
             self._next_player_turn()
@@ -62,28 +54,6 @@ class Game:
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""
         return GameState(self.board, self.players)
-
-    def draw(self) -> None:
-        self.board.draw(self.screen)
-        for player in self.players:
-            player.draw(self.screen)
-        pygame.display.update()
-
-    @staticmethod
-    def _check_game_closed():
-        """Check if user closed the window."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                # deactivates the pygame library
-                pygame.quit()
-                # quit the program.
-                quit()
-
-    def _initialize_pygame(self):
-        if Constants.DRAW_PYGAME_UI:
-            pygame.init()
-            self.screen = pygame.display.set_mode(Constants.SCREEN_SIZE)
-            pygame.display.set_caption("Canasta")
 
     def _next_player_turn(self) -> None:
         """Increment the player and team counters to indicate it's now the next players turn."""

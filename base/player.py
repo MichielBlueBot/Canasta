@@ -1,13 +1,8 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 from typing import Optional, TYPE_CHECKING
 
-import pygame
-
 from base.cards.hand import Hand
-from base.constants import Constants
-from base.drawable import Drawable
 from base.enums.game_phase import GamePhase
-from base.enums.team_color import TeamColor
 from base.team import Team
 
 if TYPE_CHECKING:
@@ -15,7 +10,7 @@ if TYPE_CHECKING:
     from base.actions.action import Action
 
 
-class Player(Drawable, metaclass=ABCMeta):
+class Player(metaclass=ABCMeta):
 
     def __init__(self, identifier: int):
         self.hand = None  # type: Optional[Hand]
@@ -37,32 +32,6 @@ class Player(Drawable, metaclass=ABCMeta):
         A valid series of actions will always result in a END_TURN_PHASE game phase which ends the players turn.
         """
         raise NotImplementedError
-
-    def draw(self, screen) -> None:
-        # create a font object.
-        # 1st parameter is the font file
-        # which is present in pygame.
-        # 2nd parameter is size of the font
-        font = pygame.font.Font('freesansbold.ttf', Constants.DEFAULT_FONT_SIZE)
-        # create a text suface object,
-        # on which text is drawn on it.
-        text = font.render('{} {} {}'.format("HUMAN" if self.is_human else "AI", self.identifier, self.team.color),
-                           True, (0, 0, 0), (255, 255, 255))
-        # create a rectangular object for the
-        # text surface object
-        text_rect = text.get_rect()
-        # set the center of the rectangular object.
-        if self.team_color == TeamColor.BLUE:
-            width_offset = (Constants.SCREEN_WIDTH // 2) * 0.8
-            x_offset = width_offset if self.identifier == 1 else -width_offset
-            y_offset = -Constants.SCREEN_WIDTH * 0.1
-        else:
-            height_offset = (Constants.SCREEN_HEIGHT // 2) * 0.9
-            x_offset = 0
-            y_offset = height_offset if self.identifier == 2 else -height_offset
-        text_rect.center = (x_offset + (Constants.SCREEN_WIDTH // 2), y_offset + (Constants.SCREEN_HEIGHT // 2))
-        # draw the text
-        screen.blit(text, text_rect)
 
     @property
     def team_color(self):
