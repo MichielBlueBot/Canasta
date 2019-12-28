@@ -46,9 +46,7 @@ class App extends React.Component {
                     <button onClick={this.newGame}>New game</button>
                     <button onClick={this.updateState}>Update</button>
                     <br/>
-                    {this.state.gameId}
-                    <br/>
-                    {this.state.state}
+                    <game state=this.state.state></game>
                   </div>
                  )
         }
