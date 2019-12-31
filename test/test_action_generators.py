@@ -21,10 +21,10 @@ class TestGamePhase(TestCase):
         max_length = 14
         for suit in POSSIBLE_SUIT:
             # All suits should generate an equal and correct amount of possible card series
-            self.assertEqual(2488, len(list(suit_series_generator(suit=suit, min_length=min_length, max_length=max_length))))
+            self.assertEqual(2655, len(list(suit_series_generator(suit=suit, min_length=min_length, max_length=max_length))))
 
     def test_series_generator(self):
         min_length = 3
         max_length = 14
         # This generator is simply the suit_series_generator looped over all series and thus should produce 4 times the resuts
-        self.assertEqual(4*2488, len(list(series_generator(min_length=min_length, max_length=max_length))))
+        self.assertEqual(4*2655, len(list(series_generator(min_length=min_length, max_length=max_length))))

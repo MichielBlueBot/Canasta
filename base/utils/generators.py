@@ -27,9 +27,9 @@ def suit_series_generator(suit: str, min_length: int = 1, max_length: Optional[i
         for possible_suit in (set(POSSIBLE_SUIT) - {suit}):
             for i in range(len(original_series)):
                 yield CardSeries(original_series[:i] + [Card(2, possible_suit)] + original_series[i+1:])
-        # If the series doesn't contain the suits 2, then any card can also be a 2 of the suit itself
-        if 2 not in ranks:
-            for i in range(len(original_series)):
+        # For the 2 of the suit itself, we must make sure not to replace the 'real' 2 with a joker one, this would be a duplicate
+        for i in range(len(original_series)):
+            if original_series[i] != Card(2, suit):
                 yield CardSeries(original_series[:i] + [Card(2, suit)] + original_series[i + 1:])
 
 
