@@ -1,3 +1,4 @@
+from numbers import Number
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
@@ -14,6 +15,9 @@ class TakeCardAction(Action):
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return None
+
+    def get_reward(self) -> Number:
+        return 1  # Basic reward to not discourage taking cards
 
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase

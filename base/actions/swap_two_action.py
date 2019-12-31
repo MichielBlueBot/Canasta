@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
 from base.enums.game_phase import GamePhase
@@ -11,11 +11,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class SwapTwoAction(Action):
+class SwapTwoAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries, direction: TwoSwapDirection):
+        super().__init__(series)
         self.card = card
-        self.series = series
         self.direction = direction
 
     def _key(self):
@@ -49,7 +49,11 @@ class SwapTwoAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
+        # We keep track of the added value of executing this action to compute the reward
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
         self.series.swap_two(self.card, self.direction)
+        self.score_value = self.series.get_total_value() - pre_execution_value
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():

@@ -23,6 +23,9 @@ class CardSet(metaclass=ABCMeta):
     def __iter__(self):
         return self._cards.__iter__()
 
+    def clear(self):
+        self._cards = []
+
     def num_cards(self):
         return len(self._cards)
 

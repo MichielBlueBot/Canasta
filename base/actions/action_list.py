@@ -31,7 +31,7 @@ def get_take_stack_actions() -> List['Action']:
 
 
 def get_swap_joker_actions() -> List['Action']:
-    for series in series_generator(min_length=3, max_length=13):
+    for series in series_generator(min_length=3, max_length=14):
         if series.has_joker():
             options = series.get_swap_joker_options()
             for option in options:
@@ -39,7 +39,7 @@ def get_swap_joker_actions() -> List['Action']:
 
 
 def get_swap_two_actions() -> List['Action']:
-    for series in series_generator(min_length=3, max_length=13):
+    for series in series_generator(min_length=3, max_length=14):
         if series.has_two_joker():
             options = series.get_swap_two_options()
             for option in options:
@@ -56,7 +56,7 @@ def get_swap_two_actions() -> List['Action']:
 
 
 def get_put_actions() -> List['Action']:
-    for series in series_generator(min_length=3, max_length=13):
+    for series in series_generator(min_length=3, max_length=14):
         yield PutAction(cards=series.get_raw_cards())
 
 
@@ -68,14 +68,14 @@ def get_discard_card_actions() -> List['Action']:
 
 
 def get_add_front_actions() -> List['Action']:
-    for series in series_generator(min_length=3, max_length=13):
+    for series in series_generator(min_length=3, max_length=14):
         add_front_options = series.get_add_front_options()
         for option in add_front_options:
             yield AddFrontAction(card=option, series=series)
 
 
 def get_add_back_actions() -> List['Action']:
-    for series in series_generator(min_length=3, max_length=13):
+    for series in series_generator(min_length=3, max_length=14):
         add_back_options = series.get_add_back_options()
         for option in add_back_options:
             yield AddBackAction(card=option, series=series)
@@ -90,3 +90,6 @@ ALL_ACTIONS = (list(get_take_card_actions()) +
                list(get_discard_card_actions()) +
                list(get_add_front_actions()) +
                list(get_add_back_actions()))  # type: List['Action']
+
+ACTION_TO_IDX = {action: i for i, action in enumerate(ALL_ACTIONS)}
+IDX_TO_ACTION = {i: action for action, i in ACTION_TO_IDX.items()}

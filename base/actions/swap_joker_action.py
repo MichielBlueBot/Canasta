@@ -1,8 +1,10 @@
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
+from base.constants import Constants
 from base.enums.game_phase import GamePhase
 
 if TYPE_CHECKING:
@@ -10,11 +12,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class SwapJokerAction(Action):
+class SwapJokerAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries):
+        super().__init__(series)
         self.card = card
-        self.series = series
 
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
@@ -41,8 +43,11 @@ class SwapJokerAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
         joker = self.series.swap_joker(self.card)
         player.hand.add(joker)
+        self.score_value = self.series.get_total_value() - pre_execution_value + Constants.JOKER_SWAP_EXTRA_SCORE
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         return GamePhase.PLAY_JOKER_PHASE

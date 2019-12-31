@@ -1,3 +1,4 @@
+from numbers import Number
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
@@ -12,11 +13,15 @@ if TYPE_CHECKING:
 class DiscardCardAction(Action):
 
     def __init__(self, card: Card):
+        super().__init__()
         self.card = card
 
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.card
+
+    def get_reward(self) -> Number:
+        return 1  # Basic reward to not discourage the discard behaviour.
 
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase

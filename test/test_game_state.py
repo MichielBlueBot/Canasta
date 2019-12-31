@@ -12,11 +12,11 @@ class TestGamePhase(TestCase):
 
     def test_none_phase(self):
         self.game.board.phase = None
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player],
+        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player_idx],
                                                                   board=self.game.board)]
         self.assertEqual(0, len(validated_actions))
 
     def test_initial_phase(self):
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player],
+        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player_idx],
                                                                   board=self.game.board)]
         self.assertEqual(2, len(validated_actions))  # initial possible actions are TakeCardAction and TakeStackAction

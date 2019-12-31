@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from numbers import Number
 from typing import TYPE_CHECKING
 
 from base.enums.game_phase import GamePhase
@@ -9,6 +10,10 @@ if TYPE_CHECKING:
 
 
 class Action(metaclass=ABCMeta):
+
+    def __init__(self):
+        super().__init__()
+        self.is_executed = False
 
     @abstractmethod
     def _key(self):
@@ -27,6 +32,10 @@ class Action(metaclass=ABCMeta):
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         raise NotImplementedError
 
+    def get_reward(self) -> Number:
+        """Return the reward for this action, assuming the action has already been executed."""
+        return 0
+
     def execute(self, player: 'Player', board: 'Board') -> None:
         """
         Validate this action for the given player and board, execute the action and update the board phase.
@@ -37,6 +46,7 @@ class Action(metaclass=ABCMeta):
         if not self.validate(player=player, board=board):
             raise Exception("Invalid action. \n {} \n {} \n {}".format(self, player, board))
         self._execute(player, board)
+        self.is_executed = True
         board.set_phase(self._target_phase(player=player, board=board))
 
     def __repr__(self):

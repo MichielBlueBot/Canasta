@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
 from base.enums.game_phase import GamePhase
@@ -10,11 +10,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class AddBackAction(Action):
+class AddBackAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries):
+        super().__init__(series)
         self.card = card
-        self.series = series
 
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
@@ -45,7 +45,10 @@ class AddBackAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
         self.series.add_back(self.card)
+        self.score_value = self.series.get_total_value() - pre_execution_value
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():
