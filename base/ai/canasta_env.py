@@ -7,6 +7,7 @@ from base.actions.action import Action
 from base.actions.action_list import ALL_ACTIONS, IDX_TO_ACTION
 from base.ai.controlled_game import ControlledGame
 from base.enums.game_phase import GamePhase
+from base.game_state import GameState
 
 
 class CanastaEnv(Env):
@@ -26,8 +27,7 @@ class CanastaEnv(Env):
         self.action_space = spaces.Discrete(len(ALL_ACTIONS))
 
         # Not sure yet what to do with the observation space
-        # TODO: state is a fixed list of integers, figure out how big this list is to set the space definition here
-        self.observation_space = spaces.Discrete(150)  # 150 is a placeholder
+        self.observation_space = spaces.Discrete(GameState.SIZE)
 
         # Store what the agent tried
         self.curr_episode = -1
