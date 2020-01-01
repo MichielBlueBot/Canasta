@@ -38,9 +38,11 @@ class ActionService(metaclass=Singleton):
         self._idx_to_action = {i: action for action, i in self._action_to_idx.items()}
 
     def action_to_idx(self, action: 'Action') -> int:
+        """Return the unique index associated with the given action."""
         return self._action_to_idx[action]
 
     def idx_to_action(self, index: int) -> 'Action':
+        """Return the action associated with the given unique index."""
         # Always return a copy so a unique action object is obtained
         return copy(self._idx_to_action[index])
 
@@ -50,8 +52,12 @@ class ActionService(metaclass=Singleton):
         return [copy(a) for a in self._all_actions if a.validate(player=player, board=board)]
 
     def get_valid_actions_mask(self, player: 'Player', board: 'Board') -> List[bool]:
-        """Return a boolean mask representing the valid actions for the given player and board"""
+        """Return a boolean mask corresponding to the unique indexes representing the valid actions for the given player and board."""
         return [a.validate(player=player, board=board) for a in self._all_actions]
+
+    #####################
+    # ACTION GENERATORS #
+    #####################
 
     @staticmethod
     def _get_take_card_actions() -> List['Action']:
