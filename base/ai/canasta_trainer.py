@@ -4,7 +4,7 @@ from collections import defaultdict
 import numpy as np
 import tensorflow as tf
 
-from base.actions.action_service import ActionService
+from base.action_service import ActionService
 from base.ai.canasta_env import CanastaEnv
 
 

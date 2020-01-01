@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action_service import ActionService
+from base.action_service import ActionService
 from base.player import Player
 
 if TYPE_CHECKING:

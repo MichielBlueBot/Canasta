@@ -4,7 +4,7 @@ from typing import Optional, List
 from gym import Env, spaces
 
 from base.actions.action import Action
-from base.actions.action_service import ActionService
+from base.action_service import ActionService
 from base.ai.controlled_game import ControlledGame
 from base.enums.game_phase import GamePhase
 from base.game_state import GameState

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from base.actions.action_service import ActionService
+from base.action_service import ActionService
 from base.game import Game
 
 

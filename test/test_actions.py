@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from base.actions.action_service import ActionService
+from base.action_service import ActionService
 from base.actions.add_back_action import AddBackAction
 from base.actions.add_front_action import AddFrontAction
 from base.actions.discard_card_action import DiscardCardAction
