@@ -118,7 +118,7 @@ def main():
     env = CanastaEnv()
     gamma = 0.99
     copy_step = 25
-    print_exp_step = 10
+    print_exp_step = 100000000
     num_states = env.observation_space.n
     num_actions = env.action_space.n
     hidden_units = [200, 200]
