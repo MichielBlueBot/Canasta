@@ -36,6 +36,10 @@ class Action(metaclass=ABCMeta):
         """Return the reward for this action, assuming the action has already been executed."""
         return 0
 
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        return False
+
     def execute(self, player: 'Player', board: 'Board') -> None:
         """
         Validate this action for the given player and board, execute the action and update the board phase.

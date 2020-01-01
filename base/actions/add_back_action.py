@@ -29,7 +29,7 @@ class AddBackAction(SeriesInteractionAction):
             if not self.card.is_joker():
                 return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= 2 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):
             return False
         # Make sure the player is adding to its own teams series
         team_series = board.get_series_for_player(player)
@@ -53,6 +53,12 @@ class AddBackAction(SeriesInteractionAction):
                 series.add_back(self.card)
                 break
         self.score_value = self.series.get_total_value() - pre_execution_value
+
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        if self.series.length == 6 and not self.card.is_joker_like():
+            return True
+        return False
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():

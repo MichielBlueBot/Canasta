@@ -57,6 +57,12 @@ class PutAction(Action):
             return GamePhase.NO_CARDS_PHASE
         return GamePhase.ACTION_PHASE
 
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        if self.series.is_pure():
+            return True
+        return False
+
     def __str__(self):
         execution_tag = "" if not self.is_executed else "(E) "
         return "{}Put {}".format(execution_tag, self.series)

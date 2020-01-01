@@ -26,8 +26,18 @@ class TakeCardAction(Action):
     def _execute(self, player: 'Player', board: 'Board'):
         deck_card = board.deck.deal()
         player.hand.add(deck_card)
+        if board.deck.is_empty():
+            if board.left_pile_active():
+                cards = board.grab_left_pile()
+                board.deck.add_cards(cards)
+            elif board.right_pile_active():
+                # Move the pile to the deck
+                cards = board.grab_right_pile()
+                board.deck.add_cards(cards)
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
+        if board.deck.is_empty():
+            return GamePhase.EMPTY_DECK_GAME_END_PHASE
         return GamePhase.ACTION_PHASE
 
     def __str__(self):

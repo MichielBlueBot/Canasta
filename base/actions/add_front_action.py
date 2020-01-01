@@ -60,6 +60,12 @@ class AddFrontAction(SeriesInteractionAction):
             return GamePhase.NO_CARDS_PHASE
         return GamePhase.ACTION_PHASE
 
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        if self.series.length == 6 and not self.card.is_joker_like():
+            return True
+        return False
+
     def __str__(self):
         execution_tag = "" if not self.is_executed else "(E) "
         return "{}AddFront {}  >>>  {}".format(execution_tag, self.card, self.series)

@@ -14,7 +14,7 @@ class ControlledGame(Game):
     def __init__(self):
         super().__init__()
 
-    def play(self):
+    def play(self, verbose: bool = False):
         raise NotImplemented("The training game can only be played through the play_action() function.")
 
     def play_action(self, action: Action):

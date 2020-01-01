@@ -1,5 +1,6 @@
 import datetime
 from collections import defaultdict
+from typing import Any, Dict
 
 import numpy as np
 import tensorflow as tf
@@ -19,8 +20,10 @@ class MyModel(tf.keras.Model):
             num_actions, activation='linear', kernel_initializer='RandomNormal')
 
     @tf.function
-    def call(self, inputs, mask):
-        z = self.input_layer(inputs)
+    def call(self, inputs: Dict[str, Any]):
+        state = inputs['state']
+        mask = inputs['mask']
+        z = self.input_layer(state)
         for layer in self.hidden_layers:
             z = layer(z)
         output = self.output_layer(z)
@@ -40,8 +43,9 @@ class DQN:
         self.max_experiences = max_experiences
         self.min_experiences = min_experiences
 
-    def predict(self, inputs, masks):
-        return self.model(np.atleast_2d(inputs.astype('float32'), masks.astype('float32')))
+    def predict(self, state, masks):
+        inputs = {'state': np.atleast_2d(state), 'mask': np.atleast_2d(masks)}
+        return self.model(inputs)
 
     @tf.function
     def train(self, target_net):

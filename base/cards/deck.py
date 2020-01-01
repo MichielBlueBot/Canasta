@@ -35,6 +35,7 @@ class Deck(object):
         """
         LOGGER.debug("Creating a new deck (with_jokers:%s)", with_jokers)
 
+        self._num_added_cards = 0  # Keep track of how many cards are added to the deck after creation
         self._with_jokers = with_jokers
         self._cards = []
         self._in_play_cards = []
@@ -47,6 +48,10 @@ class Deck(object):
         for suit in POSSIBLE_SUIT:
             for rank in POSSIBLE_RANK:
                 self._cards.append(Card(rank, suit))
+
+    def add_cards(self, cards: List[Card]) -> None:
+        self._cards.extend(cards)
+        self._num_added_cards += len(cards)
 
     def __repr__(self):
         """
@@ -147,7 +152,7 @@ class Deck(object):
         """
 
         # start with a simple card count check
-        total_possible_cards = (13*4) + (2 if self._with_jokers else 0)
+        total_possible_cards = (13*4) + (2 if self._with_jokers else 0) + self._num_added_cards
         if total_possible_cards != (len(self._cards)
                                     + len(self._in_play_cards)):
             return False
@@ -170,16 +175,17 @@ class Deck(object):
                 else:
                     card_dict[suit][rank] += 1
 
-        # go through generated card_dictionary to make sure that there are the
-        # appropriate rank of occurrences for each card
-        for suit in card_dict.keys():
-            for rank in card_dict[suit].keys():
-                if 2 == card_dict[suit][rank]:
-                    # check for 2 jokers
-                    if not (JOKER_SUIT == suit and JOKER_RANK == rank):
+        # Don't do this check if we've manually added extra cards to the deck, as this will no longer work in that case
+        if self._num_added_cards == 0:
+            # go through generated card_dictionary to make sure that there are the
+            # appropriate rank of occurrences for each card
+            for suit in card_dict.keys():
+                for rank in card_dict[suit].keys():
+                    if 2 == card_dict[suit][rank]:
+                        # check for 2 jokers
+                        if not (JOKER_SUIT == suit and JOKER_RANK == rank):
+                            return_value = False
+                    elif 1 != card_dict[suit][rank]:
+                        LOGGER.info("Something is wrong with the %s", Card(rank, suit))
                         return_value = False
-                elif 1 != card_dict[suit][rank]:
-                    LOGGER.info("Something is wrong with the %s", Card(rank, suit))
-                    return_value = False
-
         return return_value

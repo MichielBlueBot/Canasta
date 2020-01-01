@@ -61,13 +61,14 @@ class Game:
     def current_team(self) -> Team:
         return self.teams[self.current_team_idx]
 
-    def play(self):
+    def play(self, verbose: bool = False):
         if not self.initialized:
             raise Exception("Game not initialized")
         while not self.is_finished():
-            self.print()
-            print("Current player: {}".format(self.current_player_idx))
-            self.players[self.current_player_idx].play(self.get_state())
+            if verbose:
+                self.print()
+                print("Current player: {}".format(self.current_player_idx))
+            self.players[self.current_player_idx].play(self.get_state(), verbose=verbose)
             self._next_player_turn()
 
     def get_state(self) -> GameState:
