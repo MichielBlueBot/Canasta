@@ -4,7 +4,7 @@ from collections import defaultdict
 import numpy as np
 import tensorflow as tf
 
-from base.actions.action_list import IDX_TO_ACTION
+from base.actions.action_service import ActionService
 from base.ai.canasta_env import CanastaEnv
 
 
@@ -108,7 +108,7 @@ def play_game(env, train_net, target_net, epsilon, copy_step, print_exp_step):
         if iteration % print_exp_step == 0:
             print("Experience replay:")
             for exp_action in train_net.experience['a']:
-                print(IDX_TO_ACTION[exp_action])
+                print(ActionService().idx_to_action(exp_action))
         if iteration % copy_step == 0:
             target_net.copy_weights(train_net)
     return rewards

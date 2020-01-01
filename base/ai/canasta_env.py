@@ -4,7 +4,7 @@ from typing import Optional, List
 from gym import Env, spaces
 
 from base.actions.action import Action
-from base.actions.action_list import ALL_ACTIONS, IDX_TO_ACTION
+from base.actions.action_service import ActionService
 from base.ai.controlled_game import ControlledGame
 from base.enums.game_phase import GamePhase
 from base.game_state import GameState
@@ -24,7 +24,7 @@ class CanastaEnv(Env):
         self.curr_step = -1
 
         # Define what the agent can do, each action in the game has a unique index
-        self.action_space = spaces.Discrete(len(ALL_ACTIONS))
+        self.action_space = spaces.Discrete(ActionService().num_actions)
 
         # Not sure yet what to do with the observation space
         self.observation_space = spaces.Discrete(GameState.SIZE)
@@ -63,7 +63,7 @@ class CanastaEnv(Env):
         """
         if self.game.is_finished():
             raise RuntimeError("Episode is done, please reset the game.")
-        action = IDX_TO_ACTION[action_idx]  # type: Action
+        action = ActionService().idx_to_action(action_idx)  # type: Action
         self.curr_step += 1
         self._take_action(action, action_idx)
         reward = action.get_reward()

@@ -1,7 +1,7 @@
 from typing import List
 
 from base.actions.action import Action
-from base.actions.action_list import ALL_ACTIONS
+from base.actions.action_service import ALL_ACTIONS, ActionService
 from base.ai.controlled_player import ControlledPlayer
 from base.constants import Constants
 from base.enums.team_color import TeamColor
@@ -27,8 +27,8 @@ class ControlledGame(Game):
         self._next_player_turn()
 
     def get_current_actions_mask(self) -> List[bool]:
-        """Return a boolean mask representing the current valid actions from the list of ALL_ACTIONS."""
-        return [a.validate(player=self.current_player, board=self.board) for a in ALL_ACTIONS]
+        """Return a boolean mask representing the current valid actions."""
+        return ActionService().get_valid_actions_mask(self.current_player, self.board)
 
     def _initialize_players(self) -> None:
         self.players = [ControlledPlayer(i) for i in range(Constants.NUM_PLAYERS)]

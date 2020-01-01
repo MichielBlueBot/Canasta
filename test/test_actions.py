@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from base.actions.action_list import ALL_ACTIONS
+from base.actions.action_service import ActionService
 from base.actions.add_back_action import AddBackAction
 from base.actions.add_front_action import AddFrontAction
 from base.actions.discard_card_action import DiscardCardAction
@@ -39,8 +39,7 @@ class TestGamePhase(TestCase):
         target_card = Card(9, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add front action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         target_series = self.game.board.get_series_for_player(target_player)[0]
         add_front_action = AddFrontAction(card=target_card,
                                           series=target_series)
@@ -67,8 +66,7 @@ class TestGamePhase(TestCase):
         target_card = Card(13, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add back action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         target_series = self.game.board.get_series_for_player(target_player)[0]
         add_back_action = AddBackAction(card=target_card,
                                         series=target_series)
@@ -90,8 +88,7 @@ class TestGamePhase(TestCase):
         target_card = Card(10, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the discard card action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         discard_card_action = DiscardCardAction(card=target_card)
         self.assertIn(discard_card_action, validated_actions)
         # Execute the action
@@ -114,8 +111,7 @@ class TestGamePhase(TestCase):
             target_player.hand.add(card)
         put_action = PutAction(target_cards)
         # Ensure the player can now perform the put action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         self.assertIn(put_action, validated_actions)
         # Execute the action
         put_action.execute(target_player, self.game.board)
@@ -141,8 +137,7 @@ class TestGamePhase(TestCase):
         target_card = Card(11, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add back action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         target_series = self.game.board.get_series_for_player(target_player)[0]
         swap_joker_action = SwapJokerAction(card=target_card,
                                             series=target_series)
@@ -174,8 +169,7 @@ class TestGamePhase(TestCase):
         target_card = Card(11, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the swap two action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         target_series = self.game.board.get_series_for_player(target_player)[0]
         swap_two_action = SwapTwoAction(card=target_card,
                                         series=target_series,
@@ -206,8 +200,7 @@ class TestGamePhase(TestCase):
         target_card = Card(11, "Hearts")
         target_player.hand.add(target_card)
         # Ensure the player can now perform the swap two action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         target_series = self.game.board.get_series_for_player(target_player)[0]
         swap_two_action = SwapTwoAction(card=target_card,
                                         series=target_series,
@@ -230,8 +223,7 @@ class TestGamePhase(TestCase):
         target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
         take_card_action = TakeCardAction()
         # Ensure the player can now perform the add back action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         self.assertIn(take_card_action, validated_actions)
         num_cards_in_deck_before_action = self.game.board.deck.num_cards()
         num_cards_in_hand_before_action = target_player.hand.num_cards()
@@ -255,8 +247,7 @@ class TestGamePhase(TestCase):
         self.assertEqual(GamePhase.NO_CARDS_PHASE, self.game.board.phase)
         take_pile_action = TakePileAction(side=PileSide.LEFT)
         # Ensure the player can now perform the take pile action
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         self.assertIn(take_pile_action, validated_actions)
         self.assertFalse(target_player.has_grabbed_pile())
         self.assertFalse(target_player.team.has_grabbed_pile())
@@ -281,8 +272,7 @@ class TestGamePhase(TestCase):
         self.game.board.stack.put(Card(12, "Hearts"))
         cards_in_stack = self.game.board.stack.get_raw_cards()
         take_stack_action = TakeStackAction()
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=target_player,
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
         self.assertIn(take_stack_action, validated_actions)
         # Execute the action
         take_stack_action.execute(target_player, self.game.board)
@@ -293,6 +283,5 @@ class TestGamePhase(TestCase):
         self.assertEqual(GamePhase.ACTION_PHASE, self.game.board.phase)
 
     def test_initial_phase(self):
-        validated_actions = [a for a in ALL_ACTIONS if a.validate(player=self.game.players[self.game.current_player_idx],
-                                                                  board=self.game.board)]
+        validated_actions = ActionService().get_valid_actions(self.game.current_player, self.game.board)
         self.assertEqual(2, len(validated_actions))  # initial possible actions are TakeCardAction and TakeStackAction
