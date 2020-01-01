@@ -45,8 +45,12 @@ class SwapJokerAction(SeriesInteractionAction):
     def _execute(self, player: 'Player', board: 'Board'):
         pre_execution_value = self.series.get_total_value()
         player.hand.pop(self.card)
-        joker = self.series.swap_joker(self.card)
-        player.hand.add(joker)
+        # Make sure to swap the joker in the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                joker = series.swap_joker(self.card)
+                player.hand.add(joker)
+                break
         self.score_value = self.series.get_total_value() - pre_execution_value + Constants.JOKER_SWAP_EXTRA_SCORE
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:

@@ -52,7 +52,11 @@ class SwapTwoAction(SeriesInteractionAction):
         # We keep track of the added value of executing this action to compute the reward
         pre_execution_value = self.series.get_total_value()
         player.hand.pop(self.card)
-        self.series.swap_two(self.card, self.direction)
+        # Make sure to swap the two in the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                series.swap_two(self.card, self.direction)
+                break
         self.score_value = self.series.get_total_value() - pre_execution_value
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:

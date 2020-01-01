@@ -48,7 +48,11 @@ class AddFrontAction(SeriesInteractionAction):
     def _execute(self, player: 'Player', board: 'Board'):
         pre_execution_value = self.series.get_total_value()
         player.hand.pop(self.card)
-        self.series.add_front(self.card)
+        # Make sure to add the card to the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                series.add_front(self.card)
+                break
         self.score_value = self.series.get_total_value() - pre_execution_value
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
