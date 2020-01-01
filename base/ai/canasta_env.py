@@ -70,6 +70,9 @@ class CanastaEnv(Env):
         observation = self._get_state()
         return observation, reward, self.game.is_finished(), {}
 
+    def get_current_actions_mask(self):
+        return self.game.get_current_actions_mask()
+
     def _take_action(self, action: Action, action_idx: int):
         self.action_episode_memory[self.curr_episode].append(action_idx)
         self.game.play_action(action)
