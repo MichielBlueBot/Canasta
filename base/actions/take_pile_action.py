@@ -54,4 +54,5 @@ class TakePileAction(Action):
             return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "TakePile {}".format(self.side.value)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}TakePile {}".format(execution_tag, self.side.value)

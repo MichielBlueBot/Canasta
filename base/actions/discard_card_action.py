@@ -42,4 +42,5 @@ class DiscardCardAction(Action):
         return GamePhase.END_TURN_PHASE
 
     def __str__(self):
-        return "Discard {}".format(self.card)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}Discard {}".format(execution_tag, self.card)

@@ -1,8 +1,10 @@
 import datetime
+from collections import defaultdict
 
 import numpy as np
 import tensorflow as tf
 
+from base.actions.action_list import IDX_TO_ACTION
 from base.ai.canasta_env import CanastaEnv
 
 
@@ -34,7 +36,7 @@ class DQN:
         self.optimizer = tf.optimizers.Adam(lr)
         self.gamma = gamma
         self.model = MyModel(num_states, hidden_units, num_actions)
-        self.experience = {'s': [], 'a': [], 'r': [], 's2': [], 'done': []}
+        self.experience = defaultdict(list)
         self.max_experiences = max_experiences
         self.min_experiences = min_experiences
 
@@ -84,7 +86,7 @@ class DQN:
             v1.assign(v2.numpy())
 
 
-def play_game(env, train_net, target_net, epsilon, copy_step):
+def play_game(env, train_net, target_net, epsilon, copy_step, print_exp_step):
     rewards = 0
     iteration = 0
     done = False
@@ -103,6 +105,10 @@ def play_game(env, train_net, target_net, epsilon, copy_step):
         train_net.add_experience(exp)
         train_net.train(target_net)
         iteration += 1
+        if iteration % print_exp_step == 0:
+            print("Experience replay:")
+            for exp_action in train_net.experience['a']:
+                print(IDX_TO_ACTION[exp_action])
         if iteration % copy_step == 0:
             target_net.copy_weights(train_net)
     return rewards
@@ -112,6 +118,7 @@ def main():
     env = CanastaEnv()
     gamma = 0.99
     copy_step = 25
+    print_exp_step = 10
     num_states = env.observation_space.n
     num_actions = env.action_space.n
     hidden_units = [200, 200]
@@ -125,7 +132,7 @@ def main():
 
     train_net = DQN(num_states, num_actions, hidden_units, gamma, max_experiences, min_experiences, batch_size, lr)
     target_net = DQN(num_states, num_actions, hidden_units, gamma, max_experiences, min_experiences, batch_size, lr)
-    number_iterations = 50000
+    number_iterations = 50
     total_rewards = np.empty(number_iterations)
     epsilon = 0.99
     decay = 0.9999
@@ -133,7 +140,7 @@ def main():
     avg_rewards = 0
     for n in range(number_iterations):
         epsilon = max(min_epsilon, epsilon * decay)
-        total_reward = play_game(env, train_net, target_net, epsilon, copy_step)
+        total_reward = play_game(env, train_net, target_net, epsilon, copy_step, print_exp_step)
         total_rewards[n] = total_reward
         avg_rewards = total_rewards[max(0, n - 100):(n + 1)].mean()
         with summary_writer.as_default():

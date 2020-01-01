@@ -61,4 +61,5 @@ class SwapTwoAction(SeriesInteractionAction):
         return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "SwapTwo ({}) {}  >>>  {}".format(self.direction.value, self.card, self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}SwapTwo ({}) {}  >>>  {}".format(execution_tag, self.direction.value, self.card, self.series)

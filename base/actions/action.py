@@ -43,6 +43,8 @@ class Action(metaclass=ABCMeta):
         :param player: player performing the action
         :param board: board on which the action is performed
         """
+        if self.is_executed:
+            raise Exception("Cannot execute the same action twice!")
         if not self.validate(player=player, board=board):
             raise Exception("Invalid action. \n {} \n {} \n {}".format(self, player, board))
         self._execute(player, board)

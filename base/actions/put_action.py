@@ -58,4 +58,5 @@ class PutAction(Action):
         return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "Put {}".format(self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}Put {}".format(execution_tag, self.series)

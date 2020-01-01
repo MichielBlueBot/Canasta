@@ -53,4 +53,5 @@ class SwapJokerAction(SeriesInteractionAction):
         return GamePhase.PLAY_JOKER_PHASE
 
     def __str__(self):
-        return "SwapJoker {}  >>>  {}".format(self.card, self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}SwapJoker {}  >>>  {}".format(execution_tag, self.card, self.series)
