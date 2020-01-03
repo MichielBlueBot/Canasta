@@ -9,4 +9,3 @@ class GamePhase(Enum):
     NO_CARDS_PHASE = 3  # player has no cards left and is in position to grab one of the piles or end the game
     NO_CARDS_END_TURN_PHASE = 4  # player has no cards left after discarding, it may grab a pile but its turn is over
     END_TURN_PHASE = 5  # phase that ends a players turn
-    EMPTY_DECK_GAME_END_PHASE = 6  # phase that occurs when there are no cards left to play in the deck and no piles left to use
