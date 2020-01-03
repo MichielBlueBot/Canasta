@@ -1,3 +1,4 @@
+from copy import copy
 from typing import TYPE_CHECKING
 
 from base.actions.series_interaction_action import SeriesInteractionAction
@@ -27,7 +28,7 @@ class SwapTwoAction(SeriesInteractionAction):
         if board.phase != GamePhase.ACTION_PHASE:
             return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= 2 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):
             return False
         # Swapping to front is not allowed when there's an ace there
         if self.direction == TwoSwapDirection.FRONT and self.series.get_card(0).get_rank() == 1:
@@ -58,6 +59,16 @@ class SwapTwoAction(SeriesInteractionAction):
                 series.swap_two(self.card, self.direction)
                 break
         self.score_value = self.series.get_total_value() - pre_execution_value
+
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        # If the series is too short we can already quit
+        if len(self.series) <= 5:
+            return False
+        # Create a copy of the affected series and execute the two-swap action to see if it becomes pure
+        series = copy(self.series)
+        series.swap_two(copy(self.card), self.direction)
+        return series.is_pure()
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():

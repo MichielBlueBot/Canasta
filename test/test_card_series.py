@@ -3,76 +3,77 @@ from unittest import TestCase
 from base.card import Card, JOKER_RANK, JOKER_SUIT, POSSIBLE_SUIT
 from base.cards.card_series import CardSeries
 from base.enums.two_swap_direction import TwoSwapDirection
+from base.utils.card_constants import HEARTS
 
 
 class TestCardSeries(TestCase):
 
     def test_add_front(self):
-        card_set = CardSeries([Card(4, "hearts"), Card(5, "hearts"), Card(6, "hearts")])
+        card_set = CardSeries([Card(4, HEARTS), Card(5, HEARTS), Card(6, HEARTS)])
         self.assertEqual(card_set.num_cards(), 3)
-        new_card = Card(3, "hearts")
+        new_card = Card(3, HEARTS)
         card_set.add_front(new_card)
         self.assertEqual(card_set.num_cards(), 4)
         self.assertEqual(card_set.get_card(0), new_card)
 
     def test_add_back(self):
-        card_set = CardSeries([Card(4, "hearts"), Card(5, "hearts"), Card(6, "hearts")])
+        card_set = CardSeries([Card(4, HEARTS), Card(5, HEARTS), Card(6, HEARTS)])
         self.assertEqual(card_set.num_cards(), 3)
-        new_card = Card(7, "hearts")
+        new_card = Card(7, HEARTS)
         card_set.add_back(new_card)
         self.assertEqual(card_set.num_cards(), 4)
         self.assertEqual(card_set.get_card(-1), new_card)
 
     def test_swap_joker(self):
-        card_set_with_joker = CardSeries([Card(4, "hearts"), Card(JOKER_RANK, JOKER_SUIT), Card(6, "hearts")])
-        swap_card = Card(5, "hearts")
+        card_set_with_joker = CardSeries([Card(4, HEARTS), Card(JOKER_RANK, JOKER_SUIT), Card(6, HEARTS)])
+        swap_card = Card(5, HEARTS)
         joker = card_set_with_joker.swap_joker(swap_card)
         self.assertTrue(joker.is_joker())
         self.assertEqual(card_set_with_joker.num_cards(), 3)
         self.assertFalse(card_set_with_joker.has_joker())
 
     def test_swap_two_front(self):
-        card_set_with_two = CardSeries([Card(3, "hearts"), Card(2, "hearts"), Card(5, "hearts")])
-        swap_card = Card(4, "hearts")
+        card_set_with_two = CardSeries([Card(3, HEARTS), Card(2, HEARTS), Card(5, HEARTS)])
+        swap_card = Card(4, HEARTS)
         card_set_with_two.swap_two(swap_card, direction=TwoSwapDirection.FRONT)
         self.assertEqual(card_set_with_two.num_cards(), 4)
-        self.assertEqual(card_set_with_two.get_card(0), Card(2, "hearts"))
+        self.assertEqual(card_set_with_two.get_card(0), Card(2, HEARTS))
 
     def test_swap_two_front_edge_case(self):
-        card_set_with_two = CardSeries([Card(2, "hearts"), Card(2, "hearts"), Card(4, "hearts")])
-        swap_card = Card(3, "hearts")
+        card_set_with_two = CardSeries([Card(2, HEARTS), Card(2, HEARTS), Card(4, HEARTS)])
+        swap_card = Card(3, HEARTS)
         card_set_with_two.swap_two(swap_card, direction=TwoSwapDirection.FRONT)
         self.assertEqual(card_set_with_two.num_cards(), 4)
-        self.assertEqual(card_set_with_two.get_card(0), Card(2, "hearts"))
-        self.assertEqual(card_set_with_two.get_card(1), Card(2, "hearts"))
-        self.assertEqual(card_set_with_two.get_card(2), Card(3, "hearts"))
-        self.assertEqual(card_set_with_two.get_card(3), Card(4, "hearts"))
+        self.assertEqual(card_set_with_two.get_card(0), Card(2, HEARTS))
+        self.assertEqual(card_set_with_two.get_card(1), Card(2, HEARTS))
+        self.assertEqual(card_set_with_two.get_card(2), Card(3, HEARTS))
+        self.assertEqual(card_set_with_two.get_card(3), Card(4, HEARTS))
 
     def test_swap_two_back(self):
-        card_set_with_two = CardSeries([Card(3, "hearts"), Card(2, "hearts"), Card(5, "hearts")])
-        swap_card = Card(4, "hearts")
+        card_set_with_two = CardSeries([Card(3, HEARTS), Card(2, HEARTS), Card(5, HEARTS)])
+        swap_card = Card(4, HEARTS)
         card_set_with_two.swap_two(swap_card, direction=TwoSwapDirection.BACK)
         self.assertEqual(card_set_with_two.num_cards(), 4)
-        self.assertEqual(card_set_with_two.get_card(-1), Card(2, "hearts"))
+        self.assertEqual(card_set_with_two.get_card(-1), Card(2, HEARTS))
 
     def test_has_joker(self):
-        card_set_no_joker = CardSeries([Card(4, "hearts"), Card(5, "hearts"), Card(6, "hearts")])
+        card_set_no_joker = CardSeries([Card(4, HEARTS), Card(5, HEARTS), Card(6, HEARTS)])
         self.assertFalse(card_set_no_joker.has_joker())
-        card_set_with_joker = CardSeries([Card(4, "hearts"), Card(JOKER_RANK, JOKER_SUIT), Card(6, "hearts")])
+        card_set_with_joker = CardSeries([Card(4, HEARTS), Card(JOKER_RANK, JOKER_SUIT), Card(6, HEARTS)])
         self.assertTrue(card_set_with_joker.has_joker())
 
     def test_has_two_joker(self):
-        card_set_no_joker = CardSeries([Card(4, "hearts"), Card(5, "hearts"), Card(6, "hearts")])
+        card_set_no_joker = CardSeries([Card(4, HEARTS), Card(5, HEARTS), Card(6, HEARTS)])
         self.assertFalse(card_set_no_joker.has_two_joker())
-        card_set_with_joker2 = CardSeries([Card(3, "hearts"), Card(2, "hearts"), Card(5, "hearts")])
+        card_set_with_joker2 = CardSeries([Card(3, HEARTS), Card(2, HEARTS), Card(5, HEARTS)])
         self.assertTrue(card_set_with_joker2.has_two_joker())
 
     def test_two_joker_proper_place(self):
         # This 2 is in the proper place so it's not a joker
-        card_set = CardSeries([Card(2, "hearts"), Card(3, "hearts"), Card(4, "hearts")])
+        card_set = CardSeries([Card(2, HEARTS), Card(3, HEARTS), Card(4, HEARTS)])
         self.assertFalse(card_set.has_two_joker())
         # This 2 is in the proper place so it's not a joker
-        card_set = CardSeries([Card(1, "hearts"), Card(2, "hearts"), Card(3, "hearts")])
+        card_set = CardSeries([Card(1, HEARTS), Card(2, HEARTS), Card(3, HEARTS)])
         self.assertFalse(card_set.has_two_joker())
 
     def test_validation(self):

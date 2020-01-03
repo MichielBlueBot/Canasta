@@ -30,7 +30,7 @@ class AddFrontAction(SeriesInteractionAction):
             if not self.card.is_joker():
                 return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= 2 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):
             return False
         # Make sure the player is adding to its own teams series
         team_series = board.get_series_for_player(player)

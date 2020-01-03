@@ -2,7 +2,7 @@ from typing import Union
 
 from base.constants import Constants
 from base.utils.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION, \
-    RANK_TRANSLATION_SHORT
+    RANK_TRANSLATION_SHORT, HEARTS, DIAMONDS, SPADES
 
 """This module provides the :class:`Card` object.
 This module also has 5 constant attributes that help validate or string format
@@ -188,15 +188,15 @@ class Card(object):
         if self_suit == other_suit:
             return self.get_rank() < other.get_rank()
         else:
-            if self_suit == "hearts":
+            if self_suit == HEARTS:
                 return True
-            elif other_suit == "hearts":
+            elif other_suit == HEARTS:
                 return False
-            elif self_suit == "diamonds":
+            elif self_suit == DIAMONDS:
                 return True
-            elif other_suit == "diamonds":
+            elif other_suit == DIAMONDS:
                 return False
-            elif self_suit == "spades":
+            elif self_suit == SPADES:
                 return True
             else:
                 return False

@@ -5,6 +5,7 @@ from base.card import Card
 from base.cards.card_series import CardSeries
 from base.constants import Constants
 from base.enums.game_phase import GamePhase
+from base.utils.card_constants import JOKER_SUIT, JOKER_RANK
 
 if TYPE_CHECKING:
     from base.board import Board
@@ -26,7 +27,7 @@ class SwapJokerAction(SeriesInteractionAction):
         if board.phase != GamePhase.ACTION_PHASE:
             return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= 2 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):
             return False
         # Make sure the player is swapping a joker from a series its team owns
         team_series = board.get_series_for_player(player)
@@ -53,10 +54,17 @@ class SwapJokerAction(SeriesInteractionAction):
         self.score_value = self.series.get_total_value() - pre_execution_value + Constants.JOKER_SWAP_EXTRA_SCORE
 
     def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
-        """Return True if executing this action will create a pure canasta for the player."""
+        """
+        Return True if executing this action will create a pure canasta for the player.
+
+        For this specific action, a pure is created if swapping the joker in the series creates a pure,
+        AND the swapped joker can be added elsewhere on the board (hence not destroying the pure).
+        """
         def _player_can_play_joker_elsewhere():
+            """Return True if the player has any option on the board to add a joker, besides this actions series."""
             for series in board.get_series_for_player(player):
-                if series != self.series and self.card in (series.get_add_back_options() + series.get_add_front_options()):
+                all_add_card_action_options = series.get_add_back_options() + series.get_add_front_options()
+                if series != self.series and Card(JOKER_RANK, JOKER_SUIT) in all_add_card_action_options:
                     return True
             return False
 

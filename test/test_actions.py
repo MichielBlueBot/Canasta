@@ -15,7 +15,7 @@ from base.enums.game_phase import GamePhase
 from base.enums.pile_side import PileSide
 from base.enums.two_swap_direction import TwoSwapDirection
 from base.game import Game
-from base.utils.card_constants import JOKER_RANK, JOKER_SUIT
+from base.utils.card_constants import JOKER_RANK, JOKER_SUIT, HEARTS, DIAMONDS
 
 
 class TestGamePhase(TestCase):
@@ -29,14 +29,14 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        target_player.hand.add(Card(10, "Hearts"))
-        target_player.hand.add(Card(11, "Hearts"))
-        target_player.hand.add(Card(12, "Hearts"))
-        put_action = PutAction([Card(10, "Hearts"), Card(11, 'Hearts'), Card(12, "Hearts")])
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        target_player.hand.add(Card(10, HEARTS))
+        target_player.hand.add(Card(11, HEARTS))
+        target_player.hand.add(Card(12, HEARTS))
+        put_action = PutAction([Card(10, HEARTS), Card(11, HEARTS), Card(12, HEARTS)])
         put_action.execute(target_player, self.game.board)
         # Give the player the proper add card
-        target_card = Card(9, "Hearts")
+        target_card = Card(9, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add front action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -56,14 +56,14 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        target_player.hand.add(Card(10, "Hearts"))
-        target_player.hand.add(Card(11, "Hearts"))
-        target_player.hand.add(Card(12, "Hearts"))
-        put_action = PutAction([Card(10, "Hearts"), Card(11, 'Hearts'), Card(12, "Hearts")])
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        target_player.hand.add(Card(10, HEARTS))
+        target_player.hand.add(Card(11, HEARTS))
+        target_player.hand.add(Card(12, HEARTS))
+        put_action = PutAction([Card(10, HEARTS), Card(11, HEARTS), Card(12, HEARTS)])
         put_action.execute(target_player, self.game.board)
         # Give the player the proper add card
-        target_card = Card(13, "Hearts")
+        target_card = Card(13, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add back action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -83,9 +83,9 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
         # Give the player the proper add card
-        target_card = Card(10, "Hearts")
+        target_card = Card(10, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the discard card action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -105,8 +105,8 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        target_cards = [Card(10, "Hearts"), Card(11, 'Hearts'), Card(12, "Hearts")]
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        target_cards = [Card(10, HEARTS), Card(11, HEARTS), Card(12, HEARTS)]
         for card in target_cards:
             target_player.hand.add(card)
         put_action = PutAction(target_cards)
@@ -127,14 +127,14 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        cards = [Card(10, "Hearts"), Card(JOKER_RANK, JOKER_SUIT), Card(12, "Hearts")]
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        cards = [Card(10, HEARTS), Card(JOKER_RANK, JOKER_SUIT), Card(12, HEARTS)]
         for card in cards:
             target_player.hand.add(card)
         put_action = PutAction(cards)
         put_action.execute(target_player, self.game.board)
         # Give the player the proper swap card
-        target_card = Card(11, "Hearts")
+        target_card = Card(11, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the add back action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -158,15 +158,15 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        target_two = Card(2, "Diamonds")
-        cards = [Card(10, "Hearts"), target_two, Card(12, "Hearts")]
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        target_two = Card(2, DIAMONDS)
+        cards = [Card(10, HEARTS), target_two, Card(12, HEARTS)]
         for card in cards:
             target_player.hand.add(card)
         put_action = PutAction(cards)
         put_action.execute(target_player, self.game.board)
         # Give the player the proper swap card
-        target_card = Card(11, "Hearts")
+        target_card = Card(11, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the swap two action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -189,15 +189,15 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        target_two = Card(2, "Diamonds")
-        cards = [Card(10, "Hearts"), target_two, Card(12, "Hearts")]
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        target_two = Card(2, DIAMONDS)
+        cards = [Card(10, HEARTS), target_two, Card(12, HEARTS)]
         for card in cards:
             target_player.hand.add(card)
         put_action = PutAction(cards)
         put_action.execute(target_player, self.game.board)
         # Give the player the proper swap card
-        target_card = Card(11, "Hearts")
+        target_card = Card(11, HEARTS)
         target_player.hand.add(target_card)
         # Ensure the player can now perform the swap two action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -220,7 +220,7 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.DRAW_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
         take_card_action = TakeCardAction()
         # Ensure the player can now perform the add back action
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)
@@ -238,7 +238,7 @@ class TestGamePhase(TestCase):
         self.game.board.set_phase(GamePhase.ACTION_PHASE)
         # We're going to let the player put down it's last 3 cards to be eligible to grab a pile
         target_player.hand.clear()
-        cards = [Card(10, "Hearts"), Card(11, "Hearts"), Card(12, "Hearts")]
+        cards = [Card(10, HEARTS), Card(11, HEARTS), Card(12, HEARTS)]
         for card in cards:
             target_player.hand.add(card)
         put_action = PutAction(cards)
@@ -267,9 +267,9 @@ class TestGamePhase(TestCase):
         target_player = self.game.players[0]
         self.game.board.set_phase(GamePhase.DRAW_PHASE)
         target_player.hand.clear()
-        target_player.hand.add(Card(1, "Hearts"))  # random card so hand isn't empty or game will complain
-        self.game.board.stack.put(Card(11, "Hearts"))
-        self.game.board.stack.put(Card(12, "Hearts"))
+        target_player.hand.add(Card(1, HEARTS))  # random card so hand isn't empty or game will complain
+        self.game.board.stack.put(Card(11, HEARTS))
+        self.game.board.stack.put(Card(12, HEARTS))
         cards_in_stack = self.game.board.stack.get_raw_cards()
         take_stack_action = TakeStackAction()
         validated_actions = ActionService().get_valid_actions(target_player, self.game.board)

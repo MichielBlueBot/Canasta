@@ -96,7 +96,7 @@ class Board:
             return True
         else:
             if action is not None:
-                # Check if the specified action will create a pure
+                # Check if the specified action will create a pure, and therefore allowing to clear hand
                 if action.will_create_pure(player, self):
                     return True
             else:
@@ -107,4 +107,3 @@ class Board:
             if series.is_pure():
                 return True
         return False
-

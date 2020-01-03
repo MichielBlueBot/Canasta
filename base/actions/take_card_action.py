@@ -34,10 +34,11 @@ class TakeCardAction(Action):
                 # Move the pile to the deck
                 cards = board.grab_right_pile()
                 board.deck.add_cards(cards)
+            else:
+                # There are no cards left on the board, the game will end itself after the current players turn
+                pass
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
-        if board.deck.is_empty():
-            return GamePhase.EMPTY_DECK_GAME_END_PHASE
         return GamePhase.ACTION_PHASE
 
     def __str__(self):

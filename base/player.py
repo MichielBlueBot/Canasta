@@ -46,7 +46,7 @@ class Player(metaclass=ABCMeta):
 
     def play(self, game_state: 'GameState', verbose: bool = False):
         """Play a set of moves while it is this players turn based on the given GameState."""
-        while game_state.board.phase not in [GamePhase.END_TURN_PHASE, GamePhase.EMPTY_DECK_GAME_END_PHASE]:
+        while game_state.board.phase not in [GamePhase.END_TURN_PHASE]:
             action = self._choose_action(game_state)
             if verbose:
                 print("Executing {}".format(action))

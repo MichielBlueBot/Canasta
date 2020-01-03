@@ -35,7 +35,7 @@ class PutAction(Action):
             if not any([card.is_joker() for card in self.series]):
                 return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= len(self.series) + 1 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= len(self.series) + 1 and not board.player_may_clear_hand(player, self):
             return False
         # Make sure the player has all specified cards
         for card in self.series:

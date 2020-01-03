@@ -1,5 +1,12 @@
+# Suits
+HEARTS = "hearts"
+DIAMONDS = "diamonds"
+SPADES = "spades"
+CLUBS = "clubs"
+
+
 #: an array with all the possible suit strings
-POSSIBLE_SUIT = ['hearts', 'diamonds', 'spades', 'clubs']
+POSSIBLE_SUIT = [HEARTS, DIAMONDS, SPADES, CLUBS]
 
 #: an array with the possible ranks
 POSSIBLE_RANK = range(1, 14, 1)
