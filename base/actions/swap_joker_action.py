@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
+from base.constants import Constants
 from base.enums.game_phase import GamePhase
 
 if TYPE_CHECKING:
@@ -10,11 +11,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class SwapJokerAction(Action):
+class SwapJokerAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries):
+        super().__init__(series)
         self.card = card
-        self.series = series
 
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
@@ -41,11 +42,31 @@ class SwapJokerAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
-        joker = self.series.swap_joker(self.card)
-        player.hand.add(joker)
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
+        # Make sure to swap the joker in the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                joker = series.swap_joker(self.card)
+                player.hand.add(joker)
+                break
+        self.score_value = self.series.get_total_value() - pre_execution_value + Constants.JOKER_SWAP_EXTRA_SCORE
+
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        def _player_can_play_joker_elsewhere():
+            for series in board.get_series_for_player(player):
+                if series != self.series and self.card in (series.get_add_back_options() + series.get_add_front_options()):
+                    return True
+            return False
+
+        if self.series.length >= 7 and _player_can_play_joker_elsewhere():
+            return True
+        return False
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         return GamePhase.PLAY_JOKER_PHASE
 
     def __str__(self):
-        return "SwapJoker {}  >>>  {}".format(self.card, self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}SwapJoker {}  >>>  {}".format(execution_tag, self.card, self.series)

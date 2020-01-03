@@ -20,50 +20,62 @@ class Game:
     def __init__(self):
         self.players = None  # type: Optional[List[Player]]
         self.teams = None  # type: Optional[List[Team]]
-        self.current_player = None
-        self.current_team = None
+        self.current_player_idx = None
+        self.current_team_idx = None
         self.board = None  # type: Optional[Board]
         self.initialized = False
 
-    def initialize_game(self):
-        self.current_player = 0
-        self.current_team = 0
-        # Initialize players
-        self._initialize_players()
-        # Create new deck
-        deck = self._create_deck()
-        # Deal player hands
-        self._deal_hands(deck)
-        # Set up board (deck and piles)
-        self._initialize_board(deck)
-        # Set up the initial stack (one card from deck)
-        self._initialize_board_stack()
-        # Set up game phase
-        self.board.set_phase(GamePhase.DRAW_PHASE)
-        self.initialized = True
+    def reset_game(self, initialize: bool = True):
+        self.players = None  # type: Optional[List[Player]]
+        self.teams = None  # type: Optional[List[Team]]
+        self.current_player_idx = None
+        self.current_team_idx = None
+        self.board = None  # type: Optional[Board]
+        self.initialized = False
+        if initialize:
+            self.initialize_game()
 
-    def play(self):
+    def initialize_game(self):
+        if not self.initialized:
+            self.current_player_idx = 0
+            self.current_team_idx = 0
+            # Initialize players
+            self._initialize_players()
+            # Create new deck
+            deck = self._create_deck()
+            # Deal player hands
+            self._deal_hands(deck)
+            # Set up board (deck and piles)
+            self._initialize_board(deck)
+            # Set up the initial stack (one card from deck)
+            self._initialize_board_stack()
+            # Set up game phase
+            self.board.set_phase(GamePhase.DRAW_PHASE)
+            self.initialized = True
+
+    @property
+    def current_player(self) -> Player:
+        return self.players[self.current_player_idx]
+
+    @property
+    def current_team(self) -> Team:
+        return self.teams[self.current_team_idx]
+
+    def play(self, verbose: bool = False):
         if not self.initialized:
             raise Exception("Game not initialized")
-        while not self._is_finished():
-            self.print()
-            print("Current player: {}".format(self.current_player))
-            self.players[self.current_player].play(self.get_state())
+        while not self.is_finished():
+            if verbose:
+                self.print()
+                print("Current player: {}".format(self.current_player_idx))
+            self.players[self.current_player_idx].play(self.get_state(), verbose=verbose)
             self._next_player_turn()
 
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""
-        return GameState(self.board, self.players, self.current_player)
+        return GameState(self.board, self.players, self.current_player_idx)
 
-    def _next_player_turn(self) -> None:
-        """Increment the player and team counters to indicate it's now the next players turn."""
-        self.current_player += 1
-        self.current_player %= Constants.NUM_PLAYERS
-        self.current_team += 1
-        self.current_team %= Constants.NUM_TEAMS
-        self.board.set_phase(GamePhase.DRAW_PHASE)
-
-    def _is_finished(self) -> bool:
+    def is_finished(self) -> bool:
         """
         Return True if the game is finished.
 
@@ -79,6 +91,14 @@ class Game:
                 # Player finished the game
                 return True
         return False
+
+    def _next_player_turn(self) -> None:
+        """Increment the player and team counters to indicate it's now the next players turn."""
+        self.current_player_idx += 1
+        self.current_player_idx %= Constants.NUM_PLAYERS
+        self.current_team_idx += 1
+        self.current_team_idx %= Constants.NUM_TEAMS
+        self.board.set_phase(GamePhase.DRAW_PHASE)
 
     def _initialize_players(self) -> None:
         self.players = [AIPlayer(i) if i in Constants.AI_PLAYER_INDEXES else HumanPlayer(i)

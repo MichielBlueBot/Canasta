@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
 from base.enums.game_phase import GamePhase
@@ -10,11 +10,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class AddBackAction(Action):
+class AddBackAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries):
+        super().__init__(series)
         self.card = card
-        self.series = series
 
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
@@ -29,7 +29,7 @@ class AddBackAction(Action):
             if not self.card.is_joker():
                 return False
         # Check if player is going to clear its hand and whether its allowed to do so
-        if player.num_cards() <= 2 and not board.player_may_clear_hand(player):
+        if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):
             return False
         # Make sure the player is adding to its own teams series
         team_series = board.get_series_for_player(player)
@@ -45,7 +45,20 @@ class AddBackAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
-        self.series.add_back(self.card)
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
+        # Make sure to add the card to the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                series.add_back(self.card)
+                break
+        self.score_value = self.series.get_total_value() - pre_execution_value
+
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        if self.series.length == 6 and not self.card.is_joker_like():
+            return True
+        return False
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():
@@ -53,4 +66,5 @@ class AddBackAction(Action):
         return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "AddBack {}  <<<  {}".format(self.series, self.card)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}AddBack {}  <<<  {}".format(execution_tag, self.series, self.card)

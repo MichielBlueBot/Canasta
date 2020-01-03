@@ -1,4 +1,6 @@
 from typing import Union
+
+from base.constants import Constants
 from base.utils.card_constants import POSSIBLE_RANK, POSSIBLE_SUIT, JOKER_SUIT, JOKER_RANK, RANK_TRANSLATION, \
     RANK_TRANSLATION_SHORT
 
@@ -120,6 +122,17 @@ class Card(object):
         :rtype: str
         """
         return self._suit
+
+    def get_score(self):
+        """Return the value of this card in the scoring of the game."""
+        if self.is_joker():  # Joker
+            return Constants.JOKER_VALUE
+        if self.get_rank() == 1:  # Ace
+            return Constants.ACE_VALUE
+        if self.get_rank() <= 7:  # 3, 4, 5, 6, 7
+            return Constants.LOW_CARD_VALUE
+        else:  # 8, 9, 10, J, Q, K and 2
+            return Constants.HIGH_CARD_VALUE
 
     def is_joker_like(self) -> bool:
         """

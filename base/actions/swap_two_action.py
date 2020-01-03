@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action import Action
+from base.actions.series_interaction_action import SeriesInteractionAction
 from base.card import Card
 from base.cards.card_series import CardSeries
 from base.enums.game_phase import GamePhase
@@ -11,11 +11,11 @@ if TYPE_CHECKING:
     from base.player import Player
 
 
-class SwapTwoAction(Action):
+class SwapTwoAction(SeriesInteractionAction):
 
     def __init__(self, card: Card, series: CardSeries, direction: TwoSwapDirection):
+        super().__init__(series)
         self.card = card
-        self.series = series
         self.direction = direction
 
     def _key(self):
@@ -49,7 +49,15 @@ class SwapTwoAction(Action):
         return True
 
     def _execute(self, player: 'Player', board: 'Board'):
-        self.series.swap_two(self.card, self.direction)
+        # We keep track of the added value of executing this action to compute the reward
+        pre_execution_value = self.series.get_total_value()
+        player.hand.pop(self.card)
+        # Make sure to swap the two in the series on the board (not self.series!)
+        for series in board.get_series_for_player(player):
+            if series == self.series:
+                series.swap_two(self.card, self.direction)
+                break
+        self.score_value = self.series.get_total_value() - pre_execution_value
 
     def _target_phase(self, player: 'Player', board: 'Board') -> GamePhase:
         if player.hand.is_empty():
@@ -57,4 +65,5 @@ class SwapTwoAction(Action):
         return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "SwapTwo ({}) {}  >>>  {}".format(self.direction.value, self.card, self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}SwapTwo ({}) {}  >>>  {}".format(execution_tag, self.direction.value, self.card, self.series)

@@ -44,11 +44,12 @@ class Player(metaclass=ABCMeta):
     def has_grabbed_pile(self):
         return self._pile_grabbed
 
-    def play(self, game_state: 'GameState'):
+    def play(self, game_state: 'GameState', verbose: bool = False):
         """Play a set of moves while it is this players turn based on the given GameState."""
-        while not game_state.board.phase == GamePhase.END_TURN_PHASE:
+        while game_state.board.phase not in [GamePhase.END_TURN_PHASE, GamePhase.EMPTY_DECK_GAME_END_PHASE]:
             action = self._choose_action(game_state)
-            print("Executing {}".format(action))
+            if verbose:
+                print("Executing {}".format(action))
             action.execute(self, game_state.board)
 
     def deal(self, hand: Hand):

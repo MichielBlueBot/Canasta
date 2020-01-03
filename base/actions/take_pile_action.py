@@ -1,6 +1,8 @@
+from numbers import Number
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
+from base.constants import Constants
 from base.enums.game_phase import GamePhase
 from base.enums.pile_side import PileSide
 
@@ -19,6 +21,9 @@ class TakePileAction(Action):
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.side
+
+    def get_reward(self) -> Number:
+        return Constants.TAKE_PILE_VALUE
 
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
@@ -49,4 +54,5 @@ class TakePileAction(Action):
             return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "TakePile {}".format(self.side.value)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}TakePile {}".format(execution_tag, self.side.value)

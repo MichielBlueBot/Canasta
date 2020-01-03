@@ -13,6 +13,8 @@ class GameState:
     The game state contains all necessary information for a player to determine the next action.
     """
 
+    SIZE = 20798  # Total number of integers required to represent the game state
+
     def __init__(self, board: Board, players: List[Player], current_player_index: int):
         self.board = board
         self.players = players

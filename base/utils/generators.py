@@ -20,11 +20,17 @@ def suit_series_generator(suit: str, min_length: int = 1, max_length: Optional[i
     for ranks in ranks_list_generator(min_length=min_length, max_length=max_length):
         original_series = [Card(rank, suit) for rank in ranks]
         yield CardSeries(original_series)
+        # Any card in the series can also be a joker
         for i in range(len(original_series)):
             yield CardSeries(original_series[:i] + [Card(JOKER_RANK, JOKER_SUIT)] + original_series[i+1:])
+        # Any card in the series can also be a 2 of another suit
         for possible_suit in (set(POSSIBLE_SUIT) - {suit}):
             for i in range(len(original_series)):
                 yield CardSeries(original_series[:i] + [Card(2, possible_suit)] + original_series[i+1:])
+        # For the 2 of the suit itself, we must make sure not to replace the 'real' 2 with a joker one, this would be a duplicate
+        for i in range(len(original_series)):
+            if original_series[i] != Card(2, suit):
+                yield CardSeries(original_series[:i] + [Card(2, suit)] + original_series[i + 1:])
 
 
 def ranks_list_generator(min_length: int, max_length: Optional[int]):
@@ -34,5 +40,3 @@ def ranks_list_generator(min_length: int, max_length: Optional[int]):
     for length in range(min_length, max_length + 1):
         for i in range(0, len(ranks) - length + 1):
             yield ranks[i:i+length]
-    if max_length == len(ranks):
-        yield ranks

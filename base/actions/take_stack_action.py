@@ -1,3 +1,4 @@
+from numbers import Number
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
@@ -15,6 +16,9 @@ class TakeStackAction(Action):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return None
 
+    def get_reward(self) -> Number:
+        return 1  # Basic reward for not discouraging taking the stack
+
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
         return board.phase == GamePhase.DRAW_PHASE
@@ -27,4 +31,5 @@ class TakeStackAction(Action):
         return GamePhase.ACTION_PHASE
 
     def __str__(self):
-        return "TakeStack"
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}TakeStack".format(execution_tag)

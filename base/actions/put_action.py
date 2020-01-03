@@ -1,3 +1,4 @@
+from numbers import Number
 from typing import List
 from typing import TYPE_CHECKING
 
@@ -20,6 +21,10 @@ class PutAction(Action):
     def _key(self):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.series
+
+    def get_reward(self) -> Number:
+        """The reward for putting down a series is exactly equivalent to that series' value."""
+        return self.series.get_total_value()
 
     def validate(self, player: 'Player', board: 'Board'):
         # Check the board phase
@@ -52,5 +57,12 @@ class PutAction(Action):
             return GamePhase.NO_CARDS_PHASE
         return GamePhase.ACTION_PHASE
 
+    def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
+        """Return True if executing this action will create a pure canasta for the player."""
+        if self.series.is_pure():
+            return True
+        return False
+
     def __str__(self):
-        return "Put {}".format(self.series)
+        execution_tag = "" if not self.is_executed else "(E) "
+        return "{}Put {}".format(execution_tag, self.series)

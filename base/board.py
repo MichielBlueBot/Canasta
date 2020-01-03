@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional
 
+from base.actions.action import Action
 from base.card import Card
 from base.cards.card_series import CardSeries
 from base.cards.deck import Deck
@@ -89,11 +90,17 @@ class Board:
         print_str += "------------------------------------------------" + "\n"
         return print_str
 
-    def player_may_clear_hand(self, player: 'Player') -> bool:
-        if not player.team.has_grabbed_pile():
+    def player_may_clear_hand(self, player: 'Player', action: Optional['Action'] = None) -> bool:
+        """Return True if the player may clear its hand, optionally by executing the given action."""
+        if not player.team.has_grabbed_pile() and (self.left_pile_active() or self.right_pile_active()):
             return True
         else:
-            return self.team_has_pure(player.team)
+            if action is not None:
+                # Check if the specified action will create a pure
+                if action.will_create_pure(player, self):
+                    return True
+            else:
+                return self.team_has_pure(player.team)
 
     def team_has_pure(self, team: 'Team') -> bool:
         for series in self.get_series_for_team(team):

@@ -1,7 +1,7 @@
 from random import choice
 from typing import TYPE_CHECKING
 
-from base.actions.action_list import ALL_ACTIONS
+from base.action_service import ActionService
 from base.player import Player
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ class AIPlayer(Player):
         return False
 
     def _choose_action(self, game_state: 'GameState') -> 'Action':
-        eligible_actions = [action for action in ALL_ACTIONS if action.validate(player=self, board=game_state.board)]
+        eligible_actions = ActionService().get_valid_actions(self, game_state.board)
         for action in eligible_actions:
             print(action)
         action = choice(eligible_actions)

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from base.actions.action_list import ALL_ACTIONS
+from base.action_service import ActionService
 from base.player import Player
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ class HumanPlayer(Player):
         return True
 
     def _choose_action(self, game_state: 'GameState') -> 'Action':
-        eligible_actions = [action for action in ALL_ACTIONS if action.validate(player=self, board=game_state.board)]
+        eligible_actions = ActionService().get_valid_actions(self, game_state.board)
         for i, action in enumerate(eligible_actions):
             print("{}: {}".format(i, action))
         action_index = None

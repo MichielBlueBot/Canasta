@@ -2,6 +2,7 @@ from typing import List
 
 from base.card import Card, JOKER_RANK, JOKER_SUIT
 from base.cards.card_set import CardSet
+from base.constants import Constants
 from base.enums.two_swap_direction import TwoSwapDirection
 
 
@@ -278,3 +279,22 @@ class CardSeries(CardSet):
         str_str = str_str[:-2]
         str_str += "\n]"
         return str_str
+
+    def get_canasta_score(self):
+        """Return the score value of this series specifically for the 'canastas'."""
+        if self.is_dirty():
+            return Constants.DIRTY_SCORE
+        elif self.is_pure():
+            return Constants.PURE_SCORE
+        elif self.is_five_hundred():
+            return Constants.FIVE_HUNDRED_SCORE
+        elif self.is_thousand():
+            return Constants.THOUSAND_SCORE
+        else:
+            return 0
+
+    def get_total_value(self):
+        """Return the total score value of this series."""
+        cards_score = sum([card.get_score() for card in self.get_raw_cards()])
+        canasta_score = self.get_canasta_score()
+        return cards_score + canasta_score
