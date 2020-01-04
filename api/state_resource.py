@@ -43,6 +43,6 @@ class StateResource(Resource):
             "leftPile": {"active": game_state.board.left_pile_active(),
                          "numCards": game_state.board.left_pile.num_cards()},
 
-            "rightPule": {"active": game_state.board.right_pile_active(),
+            "rightPile": {"active": game_state.board.right_pile_active(),
                           "numCards": game_state.board.right_pile.num_cards()}
         })

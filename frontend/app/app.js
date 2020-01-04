@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Game from './components/game/Game';
 
 class App extends React.Component {
 
@@ -10,11 +11,13 @@ class App extends React.Component {
             gameId: null,
         };
 
+        // Bind functions so they can access 'this'
         this.newGame = this.newGame.bind(this);
         this.updateState = this.updateState.bind(this);
     }
 
     componentDidMount() {
+        // When we want to display this component, request our state from the backend
         this.updateState();
     }
 
@@ -46,7 +49,7 @@ class App extends React.Component {
                     <button onClick={this.newGame}>New game</button>
                     <button onClick={this.updateState}>Update</button>
                     <br/>
-                    <game state=this.state.state></game>
+                    <Game state={this.state.state}></Game>
                   </div>
                  )
         }
