@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from base.ai.ai_player import AIPlayer
+from ai.ai_player import AIPlayer
 from base.board import Board
 from base.cards.deck import Deck
 from base.cards.double_deck import DoubleDeck

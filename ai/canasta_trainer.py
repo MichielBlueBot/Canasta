@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 from base.action_service import ActionService
-from base.ai.canasta_env import CanastaEnv
+from ai.canasta_env import CanastaEnv
 
 
 class MyModel(tf.keras.Model):

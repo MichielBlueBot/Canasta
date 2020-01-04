@@ -2,7 +2,7 @@ from typing import List
 
 from base.actions.action import Action
 from base.action_service import ActionService
-from base.ai.controlled_player import ControlledPlayer
+from ai.controlled_player import ControlledPlayer
 from base.constants import Constants
 from base.enums.team_color import TeamColor
 from base.game import Game

@@ -12,7 +12,7 @@ class ControlledPlayer(Player):
     def _choose_action(self, game_state: 'GameState') -> 'Action':
         raise NotImplemented("Controlled players need action determination from the outside.")
 
-    def play(self, game_state: 'GameState'):
+    def play(self, game_state: 'GameState', verbose: bool = False):
         raise NotImplemented("Controlled players can only play through the play_action() function.")
 
     def play_action(self, game_state: 'GameState', action: Action):
