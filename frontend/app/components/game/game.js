@@ -62,18 +62,19 @@ class Game extends React.Component {
         super(props);
         this.state = {
             boardCanvasWidth: 800,
-            boardCanvasHeight: 720,
+            boardCanvasHeight: 800,
             redTeamSeriesCanvasWidth: 800,
-            redTeamSeriesCanvasHeight: 360,
+            redTeamSeriesCanvasHeight: 400,
             blueTeamSeriesCanvasWidth: 800,
-            blueTeamSeriesCanvasHeight: 360
+            blueTeamSeriesCanvasHeight: 400
         };
 
         this.topPadding = 50;
         this.leftPadding = 0;
         this.cardWidth = 75;
         this.cardHeight = 114;
-        this.playerInfoHeight = 130;
+        this.cardRowHeight = 130;
+        this.playerInfoHeight = this.cardRowHeight;
         this.playerInfoWidth = 150;
         this.currentPlayerBarWidth = 30;
 
@@ -95,27 +96,21 @@ class Game extends React.Component {
     }
 
     clearAndUpdateCanvas() {
-        var boardCanvas = this.refs.boardCanvas;
-        var redTeamSeriesCanvas = this.refs.redTeamSeriesCanvas;
-        var blueTeamSeriesCanvas = this.refs.blueTeamSeriesCanvas;
-        this.clearCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas);
-        this.updateCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas);
+        var boardCtx = this.refs.boardCanvas.getContext("2d");
+        var redTeamSeriesCtx= this.refs.redTeamSeriesCanvas.getContext("2d");
+        var blueTeamSeriesCtx = this.refs.blueTeamSeriesCanvas.getContext("2d");
+        this.clearCanvas(boardCtx, redTeamSeriesCtx, blueTeamSeriesCtx);
+        this.updateCanvas(boardCtx, redTeamSeriesCtx, blueTeamSeriesCtx);
     }
 
     /* Clear all the canvases */
-    clearCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas) {
-        var boardCtx = boardCanvas.getContext("2d");
-        var redTeamSeriesCtx = redTeamSeriesCanvas.getContext("2d");
-        var blueTeamSeriesCtx = blueTeamSeriesCanvas.getContext("2d");
-        boardCtx.clearRect(0, 0, boardCanvas.width, boardCanvas.height);
-        redTeamSeriesCtx.clearRect(0, 0, redTeamSeriesCanvas.width, redTeamSeriesCanvas.height);
-        blueTeamSeriesCtx.clearRect(0, 0, blueTeamSeriesCanvas.width, blueTeamSeriesCanvas.height);
+    clearCanvas(boardCtx, redTeamSeriesCtx, blueTeamSeriesCtx) {
+        boardCtx.clearRect(0, 0, boardCtx.canvas.width, boardCtx.canvas.height);
+        redTeamSeriesCtx.clearRect(0, 0, redTeamSeriesCtx.canvas.width, redTeamSeriesCtx.canvas.height);
+        blueTeamSeriesCtx.clearRect(0, 0, blueTeamSeriesCtx.canvas.width, blueTeamSeriesCtx.canvas.height);
     }
 
-    updateCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas) {
-        var boardCtx = boardCanvas.getContext("2d");
-        var redTeamSeriesCtx = redTeamSeriesCanvas.getContext("2d");
-        var blueTeamSeriesCtx = blueTeamSeriesCanvas.getContext("2d");
+    updateCanvas(boardCtx, redTeamSeriesCtx, blueTeamSeriesCtx) {
         if (this.props.state != null) {
             // render the players to the board canvas
             this.renderPlayers(boardCtx, this.props.state.players);
@@ -179,35 +174,60 @@ class Game extends React.Component {
     renderPlayerCards(ctx, player, x, y) {
         // Separate the cards in the players hand by suit, assuming they are ordered
         var cardsBySuit = [];  // resulting List[List[card]] with lists of cards grouped by suit
-        var sameSuitCards = [];  // temporary list to hold cards of same suit while collecting them
+        var sameSuitCards = {'cards': []};  // temporary list to hold cards of same suit while collecting them
         var previousCardSuit = null;  // suit of the last seen card to know when we've collected them all
         for (var card of player.cards) {
             if (card.suit != previousCardSuit) {  // Separate the cards by suit
-                if (sameSuitCards.length > 0) {
+                if (sameSuitCards.cards.length > 0) {
                     // Add the cards collected so far to the result list and start a new list of cards for the new suit
                     cardsBySuit.push(sameSuitCards)
-                    sameSuitCards = [];
+                    sameSuitCards = {'cards': []};
                 }
                 previousCardSuit = card.suit;
             }
-            sameSuitCards.push(card);
+            sameSuitCards.cards.push(card);
         }
         // Don't forget to add the set of cards for the last suit
-        if (sameSuitCards.length > 0) {
+        if (sameSuitCards.cards.length > 0) {
             cardsBySuit.push(sameSuitCards)
         }
+        console.log(cardsBySuit)
         this.renderMultipleCardSets(ctx, cardsBySuit, x, y);
+    }
+
+    renderTeamSeries(ctx, teamSeries) {
+        for (var series of teamSeries) {
+            if (series.isDirty) {
+                series.highlight = "#456789"
+            } else if (series.isPure) {
+                series.highlight = "#456789"
+            } else if (series.isFiveHundred) {
+                series.highlight = "#456789"
+            } else if (series.isThousand) {
+                series.highlight = "#456789"
+            }
+        }
+         this.renderMultipleCardSets(ctx, teamSeries, 10, 10);
     }
 
     renderMultipleCardSets(ctx, cardSets, x, y, padding=10) {
         var cardX = x;  // first card is rendered exactly at X
         for (var cardSet of cardSets){
-            for (var card of cardSet){
+            var cardSetWidth = (cardSet.cards.length * this.cardWidth/4) + this.cardWidth/2
+            if (cardX + cardSetWidth > ctx.canvas.width) {  // start a new row
+                cardX = x;
+                y += this.cardRowHeight;
+            }
+            for (var card of cardSet.cards){
                 var img = this.cardToImg(card);
                 // Draw the card at the current location
                 ctx.drawImage(img, cardX, y, this.cardWidth, this.cardHeight);
                 // Move a small bit to the right, so cards in the same set are slightly overlaid over each other
-                cardX += (this.cardWidth/4);
+                cardX += this.cardWidth/4;
+            }
+            if ("highlight" in cardSet) {
+                ctx.fillStyle = cardSet.highlight;
+                ctx.fillRect(x, y, cardX - x, 10);
             }
             // Add extra spacing between card sets
             cardX += this.cardWidth * (5/6);
@@ -218,12 +238,6 @@ class Game extends React.Component {
         // Load card image to draw
         var imgName = card.isJoker ?  "joker" : card.shortRank + "" + card.shortSuit;
         return document.getElementById(imgName);
-    }
-
-    renderTeamSeries(ctx, teamSeries) {
-        for (series of teamSeries) {
-            this.renderMultipleCardSets(ctx, series);
-        }
     }
 
     render() {
@@ -238,11 +252,11 @@ class Game extends React.Component {
                                  </canvas>
                              </div>
                              <div className={styles.canvasContainerRight}>
-                                 <canvas ref="redTeamSeriesCanvas" id="redTeamSeriesCanvas"
+                                 <canvas ref="redTeamSeriesCanvas" id={styles.redTeamSeriesCanvas}
                                      width={this.state.redTeamSeriesCanvasWidth+"px"}
                                      height={this.state.redTeamSeriesCanvasHeight+"px"}>
                                  </canvas>
-                                 <canvas ref="blueTeamSeriesCanvas" id="blueTeamSeriesCanvas"
+                                 <canvas ref="blueTeamSeriesCanvas" id={styles.blueTeamSeriesCanvas}
                                          width={this.state.blueTeamSeriesCanvasWidth+"px"}
                                          height={this.state.blueTeamSeriesCanvasHeight+"px"}>
                                  </canvas>
