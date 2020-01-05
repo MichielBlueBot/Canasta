@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING
 
 from base.actions.action import Action
@@ -21,9 +22,11 @@ class AddFrontAction(SeriesInteractionAction):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.card, self.series
 
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         # Check the board phase
         if board.phase not in [GamePhase.ACTION_PHASE, GamePhase.PLAY_JOKER_PHASE]:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
             return False
         # Make sure we add a joker if we're in play joker phase
         if board.phase == GamePhase.PLAY_JOKER_PHASE:

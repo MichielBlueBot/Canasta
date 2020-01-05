@@ -1,3 +1,4 @@
+import logging
 from numbers import Number
 from typing import TYPE_CHECKING
 
@@ -19,9 +20,12 @@ class TakeStackAction(Action):
     def get_reward(self) -> Number:
         return 1  # Basic reward for not discouraging taking the stack
 
-    def validate(self, player: 'Player', board: 'Board'):
-        # Check the board phase
-        return board.phase == GamePhase.DRAW_PHASE
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
+        if board.phase != GamePhase.DRAW_PHASE:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
+            return False
+        return True
 
     def _execute(self, player: 'Player', board: 'Board'):
         stack_cards = board.stack.grab()

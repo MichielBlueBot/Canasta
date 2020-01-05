@@ -21,7 +21,7 @@ class Action(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         raise NotImplementedError
 
     @abstractmethod

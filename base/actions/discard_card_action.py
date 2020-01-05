@@ -1,3 +1,4 @@
+import logging
 from numbers import Number
 from typing import TYPE_CHECKING
 
@@ -23,9 +24,11 @@ class DiscardCardAction(Action):
     def get_reward(self) -> Number:
         return 1  # Basic reward to not discourage the discard behaviour.
 
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         # Check the board phase
         if board.phase != GamePhase.ACTION_PHASE:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
             return False
         # Make sure the player discard a card it currently holds in its hand
         if self.card not in player.hand:

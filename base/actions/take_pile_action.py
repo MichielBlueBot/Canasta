@@ -1,3 +1,4 @@
+import logging
 from numbers import Number
 from typing import TYPE_CHECKING
 
@@ -25,9 +26,11 @@ class TakePileAction(Action):
     def get_reward(self) -> Number:
         return Constants.TAKE_PILE_VALUE
 
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         # Check the board phase
         if board.phase not in [GamePhase.NO_CARDS_PHASE, GamePhase.NO_CARDS_END_TURN_PHASE]:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
             return False
         # Make sure that player has no cards left
         if player.hand.num_cards() != 0:

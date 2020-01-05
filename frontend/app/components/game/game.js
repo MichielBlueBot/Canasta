@@ -69,6 +69,8 @@ class Game extends React.Component {
             blueTeamSeriesCanvasHeight: 360
         };
 
+        this.topPadding = 50;
+        this.leftPadding = 0;
         this.cardWidth = 75;
         this.cardHeight = 114;
         this.playerInfoHeight = 130;
@@ -76,49 +78,102 @@ class Game extends React.Component {
         this.currentPlayerBarWidth = 30;
 
         // Bind functions so they can access 'this'
+        this.updateCanvas = this.updateCanvas.bind(this);
         this.renderPlayers = this.renderPlayers.bind(this);
         this.renderPlayerInfo = this.renderPlayerInfo.bind(this);
         this.renderPlayerCards = this.renderPlayerCards.bind(this);
-        this.updateCanvas = this.updateCanvas.bind(this);
+        this.renderMultipleCardSets = this.renderMultipleCardSets.bind(this);
+        this.renderTeamSeries = this.renderTeamSeries.bind(this);
     }
 
     componentDidMount() {
-        this.updateCanvas();
+        this.clearAndUpdateCanvas();
     }
 
     componentDidUpdate(prevProps) {
-        this.updateCanvas();
+        this.clearAndUpdateCanvas();
     }
 
-    updateCanvas() {
-        // get the canvas element using the DOM
-        var boardCtx = this.refs.boardCanvas.getContext('2d');
-        var redTeamSeriesCtx = this.refs.redTeamSeriesCanvas.getContext('2d');
-        var blueTeamSeriesCtx = this.refs.blueTeamSeriesCanvas.getContext('2d');
+    clearAndUpdateCanvas() {
+        var boardCanvas = this.refs.boardCanvas;
+        var redTeamSeriesCanvas = this.refs.redTeamSeriesCanvas;
+        var blueTeamSeriesCanvas = this.refs.blueTeamSeriesCanvas;
+        this.clearCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas);
+        this.updateCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas);
+    }
+
+    /* Clear all the canvases */
+    clearCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas) {
+        var boardCtx = boardCanvas.getContext("2d");
+        var redTeamSeriesCtx = redTeamSeriesCanvas.getContext("2d");
+        var blueTeamSeriesCtx = blueTeamSeriesCanvas.getContext("2d");
+        boardCtx.clearRect(0, 0, boardCanvas.width, boardCanvas.height);
+        redTeamSeriesCtx.clearRect(0, 0, redTeamSeriesCanvas.width, redTeamSeriesCanvas.height);
+        blueTeamSeriesCtx.clearRect(0, 0, blueTeamSeriesCanvas.width, blueTeamSeriesCanvas.height);
+    }
+
+    updateCanvas(boardCanvas, redTeamSeriesCanvas, blueTeamSeriesCanvas) {
+        var boardCtx = boardCanvas.getContext("2d");
+        var redTeamSeriesCtx = redTeamSeriesCanvas.getContext("2d");
+        var blueTeamSeriesCtx = blueTeamSeriesCanvas.getContext("2d");
         if (this.props.state != null) {
+            // render the players to the board canvas
             this.renderPlayers(boardCtx, this.props.state.players);
+            // render the red team series to the red team series canvas
             this.renderTeamSeries(redTeamSeriesCtx, this.props.state.redTeamSeries);
+            // render the blue team series to the blue team series canvas
             this.renderTeamSeries(blueTeamSeriesCtx, this.props.state.blueTeamSeries);
         }
     }
 
     renderPlayers(ctx, players){
+        // Render current player indicator
+        this.renderCurrentPlayerIndicator(ctx, players);
+        // Render background of players to match their team color
+        this.renderPlayersBackgroundColor(ctx, players);
         for (var playerIdx in players) {
             var player = players[playerIdx];
-            var x = this.playerInfoWidth;
-            var y = 50 + (playerIdx * this.playerInfoHeight);
+            var x = this.playerInfoWidth + 10;
+            var y = this.topPadding + 5 + (playerIdx * this.playerInfoHeight);
             // Render player info
-            this.renderPlayerInfo(ctx, player, 0, y)
+            this.renderPlayerInfo(ctx, player, 0, y);
             // Render player hand cards
             this.renderPlayerCards(ctx, player, x, y);
         }
     }
 
-    renderPlayerInfo(ctx, player, x, y) {
-        if (player.isCurrentPlayer) {
-            ctx.fillStyle = "#078e2b";
-            ctx.fillRect(x, y, this.currentPlayerBarWidth, this.cardHeight)
+    renderCurrentPlayerIndicator(ctx, players) {
+        var y = this.topPadding;
+        for (var player of players) {
+            if (player.isCurrentPlayer) {
+                ctx.fillStyle = "#078e2b";
+                ctx.fillRect(0, y, this.currentPlayerBarWidth, this.playerInfoHeight)
+                break
+            } else {
+                y += this.playerInfoHeight;
+            }
         }
+    }
+
+    renderPlayersBackgroundColor(ctx, players) {
+        var x = this.currentPlayerBarWidth;
+        var y = this.topPadding;
+        var bgWidth = this.playerInfoWidth - x;
+        var bgHeight = this.playerInfoHeight;
+        for (var player of players) {
+            ctx.fillStyle = player.teamColor == "red" ? "#e4b9b9" : "#9dc4e0";
+            ctx.fillRect(x, y, bgWidth, bgHeight);
+            y += this.playerInfoHeight;
+        }
+    }
+
+    renderPlayerInfo(ctx, player, x, y) {
+        ctx.fillStyle = "#000000";
+        ctx.font = "15px Arial";
+        ctx.fillText("Player " + player.playerId, x + this.currentPlayerBarWidth + 10, y + 20);
+        ctx.fillText("Team " + player.teamColor, x + this.currentPlayerBarWidth + 10, y + 40);
+        ctx.fillText("Human: " + player.isHuman.toString(), x + this.currentPlayerBarWidth + 10, y + 60);
+        ctx.fillText("Took pile: " + player.hasGrabbedPile.toString(), x + this.currentPlayerBarWidth + 10, y + 80);
     }
 
     renderPlayerCards(ctx, player, x, y) {
@@ -152,10 +207,10 @@ class Game extends React.Component {
                 // Draw the card at the current location
                 ctx.drawImage(img, cardX, y, this.cardWidth, this.cardHeight);
                 // Move a small bit to the right, so cards in the same set are slightly overlaid over each other
-                cardX += (this.cardWidth/3);
+                cardX += (this.cardWidth/4);
             }
             // Add extra spacing between card sets
-            cardX += this.cardWidth * (3/4);
+            cardX += this.cardWidth * (5/6);
         }
     }
 

@@ -1,3 +1,4 @@
+import logging
 from copy import copy
 from typing import TYPE_CHECKING
 
@@ -23,9 +24,11 @@ class SwapTwoAction(SeriesInteractionAction):
         """Return a tuple of all fields that should be checked in equality and hashing operations."""
         return self.card, self.series, self.direction
 
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         # Check the board phase
         if board.phase != GamePhase.ACTION_PHASE:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
             return False
         # Check if player is going to clear its hand and whether its allowed to do so
         if player.num_cards() <= 2 and not board.player_may_clear_hand(player, self):

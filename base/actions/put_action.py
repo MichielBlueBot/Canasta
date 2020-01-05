@@ -1,3 +1,4 @@
+import logging
 from numbers import Number
 from typing import List
 from typing import TYPE_CHECKING
@@ -26,9 +27,11 @@ class PutAction(Action):
         """The reward for putting down a series is exactly equivalent to that series' value."""
         return self.series.get_total_value()
 
-    def validate(self, player: 'Player', board: 'Board'):
+    def validate(self, player: 'Player', board: 'Board', verbose: bool = False):
         # Check the board phase
         if board.phase not in [GamePhase.ACTION_PHASE, GamePhase.PLAY_JOKER_PHASE]:
+            if verbose:
+                logging.info("Invalid action {}. Reason: wrong phase - {}".format(self, board.phase))
             return False
         # Make sure we replaying the joker if we're in play joker phase
         if board.phase == GamePhase.PLAY_JOKER_PHASE:

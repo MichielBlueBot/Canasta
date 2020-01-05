@@ -2,8 +2,11 @@ import random
 import string
 from typing import Optional, Tuple
 
+from base.actions.put_action import PutAction
+from base.card import Card
 from base.constants import Constants
 from base.game import Game
+from base.utils.card_constants import HEARTS
 from base.utils.singleton import Singleton
 
 
@@ -17,6 +20,9 @@ class GameRunner(metaclass=Singleton):
         game_id = self.generate_new_game_id()
         game = Game()
         game.initialize_game()
+        cards = [Card(3, HEARTS), Card(4, HEARTS), Card(5, HEARTS)]
+        game.current_player.hand.add(cards)
+        PutAction(cards=cards).execute(game.current_player, game.board)
         self.running_games[game_id] = game
         return game_id, game
 
