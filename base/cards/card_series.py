@@ -1,13 +1,18 @@
-from typing import List
+from typing import List, Optional
 
 from base.card import Card, JOKER_RANK, JOKER_SUIT
 from base.cards.card_set import CardSet
 from base.constants import Constants
 from base.enums.two_swap_direction import TwoSwapDirection
+from base.utils.card_constants import POSSIBLE_SUIT
 
 
 class CardSeries(CardSet):
     """A series of cards played by a team on the board. E.g: [3H-2H-5H-6H-7H] """
+
+    def __init__(self, cards):
+        super().__init__(cards)
+        self._main_suit = None  # Once we know our main suit, it always remains the same so we cache it
 
     def description(self) -> str:
         return "CardSeries"
@@ -15,11 +20,20 @@ class CardSeries(CardSet):
     def get_card(self, index: int) -> Card:
         return self._cards[index]
 
+    def get_main_suit(self) -> Optional[str]:
+        """Return the 'main' suit of this CardSeries, i.e. is the most occurring suit. None if series has no cards."""
+        if self._main_suit is None and self.num_cards() > 0:
+            counts = {suit: 0 for suit in POSSIBLE_SUIT + [JOKER_SUIT]}
+            for card in self._cards:
+                counts[card.get_suit()] += 1
+            self._main_suit = max(counts, key=lambda key: counts[key])
+        return self._main_suit
+
     def get_add_front_options(self) -> List[Card]:
         options = []
         if self._cards:
             first_card = self._cards[0]
-            if not first_card.is_joker() or self.is_two_joker(0):
+            if not (first_card.is_joker() or self.is_two_joker(0)):
                 rank = first_card.get_rank()
                 if rank != 1:
                     options.append(Card(rank - 1, first_card.get_suit()))
@@ -35,14 +49,15 @@ class CardSeries(CardSet):
             if not first_card.get_rank() == 1 and not self.has_joker() and not self.has_two_joker():
                 # We can add jokers if there isn't one yet
                 options.append(Card(JOKER_RANK, JOKER_SUIT))
-                options.append(Card(2, first_card.get_suit()))
+                for suit in POSSIBLE_SUIT:
+                    options.append(Card(2, suit))
         return options
 
     def get_add_back_options(self) -> List[Card]:
         options = []
         if self._cards:
             last_card = self._cards[-1]
-            if not last_card.is_joker() or self.is_two_joker(-1):
+            if not (last_card.is_joker() or self.is_two_joker(-1)):
                 rank = last_card.get_rank()
                 if rank == 13:  # After king comes ACE
                     options.append(Card(1, last_card.get_suit()))
@@ -57,7 +72,8 @@ class CardSeries(CardSet):
             if not last_card.get_rank() == 1 and not self.has_joker() and not self.has_two_joker():
                 # We can add jokers if there isn't one yet
                 options.append(Card(JOKER_RANK, JOKER_SUIT))
-                options.append(Card(2, last_card.get_suit()))
+                for suit in POSSIBLE_SUIT:
+                    options.append(Card(2, suit))
         return options
 
     def get_swap_joker_options(self) -> List[Card]:
@@ -142,26 +158,12 @@ class CardSeries(CardSet):
         return False
 
     def has_two_joker(self) -> bool:
-        num_cards = len(self._cards)
-        for i, card in enumerate(self._cards):
-            if card.is_two():
-                if i < num_cards - 1:
-                    next_card = self._cards[i + 1]
-                    if next_card.get_rank() == 3:
-                        # Found a two but it's in the proper spot
-                        return False
-                    else:
-                        # Found a two and it's not in the proper spot, so its a joker
-                        return True
-                if i > 0:
-                    previous_card = self._cards[i - 1]
-                    if previous_card.get_rank() == 1:
-                        # Found a two but it's in the proper spot
-                        return False
-                    else:
-                        # Found a two and it's not in the proper spot, so its a joker
-                        return True
-        # No two card found
+        """
+        :return: True if this series contains a two-joker
+        """
+        for i in range(len(self._cards)):
+            if self.is_two_joker(i):
+                return True
         return False
 
     def is_two_joker(self, i: int) -> bool:
@@ -170,6 +172,9 @@ class CardSeries(CardSet):
         """
         card = self.get_card(i)
         if card.is_two():
+            if card.get_suit() != self.get_main_suit():
+                # Two of the wrong suit is always a joker
+                return True
             if i > 0:
                 previous_card = self.get_card(i - 1)
                 if previous_card.get_rank() == 1:

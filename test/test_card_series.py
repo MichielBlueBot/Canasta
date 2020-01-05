@@ -3,7 +3,7 @@ from unittest import TestCase
 from base.card import Card, JOKER_RANK, JOKER_SUIT, POSSIBLE_SUIT
 from base.cards.card_series import CardSeries
 from base.enums.two_swap_direction import TwoSwapDirection
-from base.utils.card_constants import HEARTS
+from base.utils.card_constants import HEARTS, DIAMONDS
 
 
 class TestCardSeries(TestCase):
@@ -119,11 +119,13 @@ class TestCardSeries(TestCase):
             computed_options = card_series.get_add_front_options()
             self.assertEqual(computed_options, correct_options, msg="{}".format(card_series))
 
+        all_twos = [Card(2, suit) for suit in POSSIBLE_SUIT]
+
         for suit in POSSIBLE_SUIT:
             check_options(card_series=CardSeries([Card(2, suit), Card(3, suit), Card(4, suit)]),
-                          correct_options=[Card(1, suit), Card(JOKER_RANK, JOKER_SUIT), Card(2, suit)])
+                          correct_options=[Card(1, suit), Card(JOKER_RANK, JOKER_SUIT)] + all_twos)
             check_options(card_series=CardSeries([Card(11, suit), Card(12, suit), Card(13, suit)]),
-                          correct_options=[Card(10, suit), Card(JOKER_RANK, JOKER_SUIT), Card(2, suit)])
+                          correct_options=[Card(10, suit), Card(JOKER_RANK, JOKER_SUIT)] + all_twos)
             check_options(card_series=CardSeries([Card(1, suit), Card(2, suit), Card(3, suit)]),
                           correct_options=[])
             check_options(card_series=CardSeries([Card(3, suit), Card(2, suit), Card(5, suit)]),
@@ -139,16 +141,22 @@ class TestCardSeries(TestCase):
             check_options(card_series=CardSeries([Card(4, suit), Card(5, suit), Card(JOKER_RANK, JOKER_SUIT)]),
                           correct_options=[Card(3, suit)])
 
+        # Specific mix-suit check
+        check_options(card_series=CardSeries([Card(2, HEARTS), Card(4, DIAMONDS), Card(5, DIAMONDS)]),
+                      correct_options=[Card(2, DIAMONDS)])
+
     def test_get_add_back_options(self):
         def check_options(card_series, correct_options):
             computed_options = card_series.get_add_back_options()
             self.assertEqual(computed_options, correct_options, msg="{}".format(card_series))
 
+        all_twos = [Card(2, suit) for suit in POSSIBLE_SUIT]
+
         for suit in POSSIBLE_SUIT:
             check_options(card_series=CardSeries([Card(2, suit), Card(3, suit), Card(4, suit)]),
-                          correct_options=[Card(5, suit), Card(JOKER_RANK, JOKER_SUIT), Card(2, suit)])
+                          correct_options=[Card(5, suit), Card(JOKER_RANK, JOKER_SUIT)] + all_twos)
             check_options(card_series=CardSeries([Card(11, suit), Card(12, suit), Card(13, suit)]),
-                          correct_options=[Card(1, suit), Card(JOKER_RANK, JOKER_SUIT), Card(2, suit)])
+                          correct_options=[Card(1, suit), Card(JOKER_RANK, JOKER_SUIT)] + all_twos)
             check_options(card_series=CardSeries([Card(12, suit), Card(13, suit), Card(1, suit)]),
                           correct_options=[])
             check_options(card_series=CardSeries([Card(3, suit), Card(2, suit), Card(5, suit)]),
@@ -165,6 +173,10 @@ class TestCardSeries(TestCase):
                           correct_options=[Card(7, suit)])
             check_options(card_series=CardSeries([Card(11, suit), Card(12, suit), Card(JOKER_RANK, JOKER_SUIT)]),
                           correct_options=[Card(1, suit)])
+
+        # Specific mix-suit check
+        check_options(card_series=CardSeries([Card(4, HEARTS), Card(5, HEARTS), Card(2, DIAMONDS)]),
+                      correct_options=[Card(7, HEARTS)])
 
     def test_get_swap_joker_options(self):
         def check_swap_options(card_series, correct_options):
