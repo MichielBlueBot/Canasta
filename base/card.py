@@ -127,9 +127,11 @@ class Card(object):
         """Return the value of this card in the scoring of the game."""
         if self.is_joker():  # Joker
             return Constants.JOKER_VALUE
-        if self.get_rank() == 1:  # Ace
+        elif self.get_rank() == 1:  # Ace
             return Constants.ACE_VALUE
-        if self.get_rank() <= 7:  # 3, 4, 5, 6, 7
+        elif self.get_rank() == 2:  # Two
+            return Constants.HIGH_CARD_VALUE
+        elif self.get_rank() <= 7:  # 3, 4, 5, 6, 7
             return Constants.LOW_CARD_VALUE
         else:  # 8, 9, 10, J, Q, K and 2
             return Constants.HIGH_CARD_VALUE

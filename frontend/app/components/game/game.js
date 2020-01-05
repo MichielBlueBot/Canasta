@@ -326,6 +326,9 @@ function GameStateText(props) {
         return (<div>
                   <ul>
                       <li>PHASE: {props.state.phase}</li>
+                      <li>FINISHED: {props.state.isFinished.toString()}</li>
+                      <li>RED TEAM SCORE: {props.state.redTeamScore}</li>
+                      <li>BLUE TEAM SCORE: {props.state.blueTeamScore}</li>
                       <li>CURRENT PLAYER: {props.state.players[props.state.currentPlayerIndex].playerId}</li>
                       <li>DECK: {props.state.deck.numCards} cards</li>
                       <li>STACK: {props.state.stack.numCards} cards | top = ({topCard})</li>

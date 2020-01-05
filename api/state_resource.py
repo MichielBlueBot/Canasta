@@ -16,12 +16,14 @@ class StateResource(Resource):
         game = GameRunner().get_game(game_id)
         if game:
             game_state = game.get_state()
-            return self._game_state_to_json(game_state)
+            is_finished = game.is_finished()
+            return self._game_state_to_json(game_state, is_finished)
         return "Game not found", 204
 
     @staticmethod
-    def _game_state_to_json(game_state: GameState) -> str:
+    def _game_state_to_json(game_state: GameState, is_finished: bool) -> str:
         return json.dumps(indent=2, obj={
+            "isFinished": is_finished,
             "phase": game_state.board.phase.name,
             "currentPlayerIndex": game_state.current_player_index,
             "players": [
@@ -76,5 +78,7 @@ class StateResource(Resource):
                     "isFiveHundred": series.is_five_hundred(),
                     "isThousand": series.is_thousand(),
                 } for series in game_state.board.blue_team_series
-            ]
+            ],
+            "redTeamScore": game_state.red_team_score,
+            "blueTeamScore": game_state.blue_team_score,
         })

@@ -65,7 +65,9 @@ class App extends React.Component {
             axios.post('http://localhost:4800/api/game', { gameId: this.state.gameId })
               .then((res) => {
                 this.updateState();
-                this.playLoopTimeout = setTimeout(this.playLoop, 100); // Call this function again after 50ms
+                if (!this.state.state.isFinished) {  // Stop looping when game is finished
+                    this.playLoopTimeout = setTimeout(this.playLoop, 100); // Call this function again after 50ms
+                }
               }, (error) => {
                 console.log(error);
               });

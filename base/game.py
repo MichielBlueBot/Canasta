@@ -2,6 +2,8 @@ from typing import List, Optional
 
 from ai.ai_player import AIPlayer
 from base.board import Board
+from base.card import Card
+from base.cards.card_series import CardSeries
 from base.cards.deck import Deck
 from base.cards.double_deck import DoubleDeck
 from base.cards.hand import Hand
@@ -61,6 +63,18 @@ class Game:
     def current_team(self) -> Team:
         return self.teams[self.current_team_idx]
 
+    @property
+    def red_team(self) -> Optional[Team]:
+        if self.teams:
+            return self.teams[0]
+        return None
+
+    @property
+    def blue_team(self) -> Optional[Team]:
+        if self.teams:
+            return self.teams[1]
+        return None
+
     def play(self, verbose: bool = False):
         """Play a game of canasta in a loop until it is finished."""
         if not self.initialized:
@@ -86,7 +100,45 @@ class Game:
 
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""
-        return GameState(self.board, self.players, self.current_player_idx)
+        return GameState(self.board, self.players, self.current_player_idx,
+                         self.get_red_team_score(), self.get_blue_team_score(),
+                         self.get_red_team_score(include_opponent_cards=False),
+                         self.get_blue_team_score(include_opponent_cards=False))
+
+    def get_red_team_score(self, include_opponent_cards: bool = True):
+        """
+        :param include_opponent_cards: if True, include the opponents cards values in the score
+        :return: the total score for the red team.
+        """
+        opponent_cards = []
+        if include_opponent_cards:
+            for player in self.blue_team.players:
+                opponent_cards.extend(player.hand.get_raw_cards())
+        return self._get_team_score(self.red_team, self.board.red_team_series, opponent_cards)
+
+    def get_blue_team_score(self, include_opponent_cards: bool = True):
+        """
+        :param include_opponent_cards: if True, include the opponents cards values in the score
+        :return: the total score for the blue team.
+        """
+        opponent_cards = []
+        if include_opponent_cards:
+            for player in self.red_team.players:
+                opponent_cards.extend(player.hand.get_raw_cards())
+        return self._get_team_score(self.blue_team, self.board.blue_team_series, opponent_cards)
+
+    @staticmethod
+    def _get_team_score(team: Team, team_series: List[CardSeries], opponent_cards: List[Card]) -> int:
+        """Return the total score for given team, its card series and the oppposing teams cards."""
+        total_score = 0
+        for series in team_series:
+            total_score += series.get_total_value()
+        for card in opponent_cards:
+            total_score += card.get_score()
+        if team.has_grabbed_pile():
+            total_score += 100
+        # TODO: Add 100 points for finishing the game by drawing a card from the deck
+        return total_score
 
     def is_finished(self) -> bool:
         """

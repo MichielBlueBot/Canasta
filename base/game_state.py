@@ -15,10 +15,16 @@ class GameState:
 
     SIZE = 20798  # Total number of integers required to represent the game state
 
-    def __init__(self, board: Board, players: List[Player], current_player_index: int):
+    def __init__(self, board: Board, players: List[Player], current_player_index: int,
+                 red_team_score: int, blue_team_score: int,
+                 red_team_score_no_cards: int, blue_team_score_no_cards: int):
         self.board = board
         self.players = players
         self.current_player_index = current_player_index
+        self.red_team_score = red_team_score
+        self.red_team_score_no_cards = red_team_score_no_cards
+        self.blue_team_score = blue_team_score
+        self.blue_team_score_no_cards = blue_team_score_no_cards
 
     def create_numeral_representation(self, player: Player) -> List[int]:
         """
@@ -36,6 +42,7 @@ class GameState:
         representation.extend(self._own_team_series_representation(player=player))
         representation.extend(self._other_team_series_representation(player=player))
         representation.extend(self._deck_num_cards_representation())
+        representation.extend(self._team_score_representations())
         return representation
 
     @staticmethod
@@ -82,3 +89,6 @@ class GameState:
 
     def _deck_num_cards_representation(self):
         return [self.board.deck.num_cards()]
+
+    def _team_score_representations(self):
+        return [self.red_team_score_no_cards, self.blue_team_score_no_cards]
