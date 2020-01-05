@@ -39,9 +39,9 @@ class Board:
 
     def num_piles_remaining(self) -> int:
         num_piles = 0
-        if self.left_pile_active:
+        if self.left_pile_active():
             num_piles += 1
-        if self.right_pile_active:
+        if self.right_pile_active():
             num_piles += 1
         return num_piles
 
