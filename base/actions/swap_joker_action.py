@@ -71,7 +71,7 @@ class SwapJokerAction(SeriesInteractionAction):
                     return True
             return False
 
-        if self.series.length >= 7 and _player_can_play_joker_elsewhere():
+        if len(self.series) >= 7 and _player_can_play_joker_elsewhere():
             return True
         return False
 

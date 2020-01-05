@@ -59,7 +59,7 @@ class AddBackAction(SeriesInteractionAction):
 
     def will_create_pure(self, player: 'Player', board: 'Board') -> bool:
         """Return True if executing this action will create a pure canasta for the player."""
-        if self.series.length == 6 and not self.card.is_joker_like():
+        if len(self.series) == 6 and not self.card.is_joker_like():
             return True
         return False
 

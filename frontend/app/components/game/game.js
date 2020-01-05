@@ -191,7 +191,6 @@ class Game extends React.Component {
         if (sameSuitCards.cards.length > 0) {
             cardsBySuit.push(sameSuitCards)
         }
-        console.log(cardsBySuit)
         this.renderMultipleCardSets(ctx, cardsBySuit, x, y);
     }
 
@@ -323,12 +322,13 @@ class Game extends React.Component {
 
 function GameStateText(props) {
     if (props.state != null){
+        var topCard = props.state.stack.topCard != null ? props.state.stack.topCard.rank + "" + props.state.stack.topCard.suit : "empty";
         return (<div>
                   <ul>
                       <li>PHASE: {props.state.phase}</li>
                       <li>CURRENT PLAYER: {props.state.players[props.state.currentPlayerIndex].playerId}</li>
                       <li>DECK: {props.state.deck.numCards} cards</li>
-                      <li>STACK: {props.state.stack.numCards} cards | top = ({props.state.stack.topCard.rank} {props.state.stack.topCard.suit})</li>
+                      <li>STACK: {props.state.stack.numCards} cards | top = ({topCard})</li>
                       <li>LEFT PILE: {props.state.leftPile.numCards} cards (active={props.state.leftPile.active.toString()})</li>
                       <li>RIGHT PILE: {props.state.rightPile.numCards} cards (active={props.state.rightPile.active.toString()})</li>
                   </ul>

@@ -14,7 +14,7 @@ class HumanPlayer(Player):
     def is_human(self):
         return True
 
-    def _choose_action(self, game_state: 'GameState') -> 'Action':
+    def _choose_action(self, game_state: 'GameState', verbose: bool = False) -> 'Action':
         eligible_actions = ActionService().get_valid_actions(self, game_state.board)
         for i, action in enumerate(eligible_actions):
             print("{}: {}".format(i, action))

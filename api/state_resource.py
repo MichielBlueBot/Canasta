@@ -44,12 +44,13 @@ class StateResource(Resource):
             "stack": {"numCards": game_state.board.stack.num_cards(),
                       "topCard": {"rank": game_state.board.stack.look().get_rank(),
                                   "suit": game_state.board.stack.look().get_suit()}
+                      if game_state.board.stack.num_cards() > 0 else None
                       },
             "leftPile": {"active": game_state.board.left_pile_active(),
-                         "numCards": game_state.board.left_pile.num_cards()},
+                         "numCards": game_state.board.left_pile.num_cards() if game_state.board.left_pile_active() else 0},
 
             "rightPile": {"active": game_state.board.right_pile_active(),
-                          "numCards": game_state.board.right_pile.num_cards()},
+                          "numCards": game_state.board.right_pile.num_cards() if game_state.board.right_pile_active() else 0},
             "redTeamSeries": [
                 {
                     "cards": [{"rank": card.get_rank(),

@@ -24,7 +24,7 @@ class Player(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def _choose_action(self, game_state: 'GameState') -> 'Action':
+    def _choose_action(self, game_state: 'GameState', verbose: bool = False) -> 'Action':
         """
         Return an action to take given the current GameState.
 
@@ -47,13 +47,13 @@ class Player(metaclass=ABCMeta):
     def play(self, game_state: 'GameState', verbose: bool = False):
         """Play a set of moves while it is this players turn based on the given GameState."""
         while game_state.board.phase not in [GamePhase.END_TURN_PHASE]:
-            action = self._choose_action(game_state)
+            action = self._choose_action(game_state, verbose=verbose)
             if verbose:
                 print("Executing {}".format(action))
             action.execute(self, game_state.board)
 
     def play_single_step(self, game_state: 'GameState', verbose: bool = False):
-        action = self._choose_action(game_state)
+        action = self._choose_action(game_state, verbose=verbose)
         if verbose:
             print("Executing {}".format(action))
         action.execute(self, game_state.board)

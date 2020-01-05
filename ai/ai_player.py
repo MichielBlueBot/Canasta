@@ -15,9 +15,10 @@ class AIPlayer(Player):
     def is_human(self):
         return False
 
-    def _choose_action(self, game_state: 'GameState') -> 'Action':
+    def _choose_action(self, game_state: 'GameState', verbose: bool = False) -> 'Action':
         eligible_actions = ActionService().get_valid_actions(self, game_state.board)
-        for action in eligible_actions:
-            print(action)
+        if verbose:
+            for action in eligible_actions:
+                print(action)
         action = choice(eligible_actions)
         return action

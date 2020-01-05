@@ -16,9 +16,10 @@ class GameResource(Resource):
     @staticmethod
     def post():
         """Play a single step in the game specified by the gameId parameter"""
-        args = request.args
+        args = request.get_json()
         game_id = args["gameId"]
         game = GameRunner().get_game(game_id)
         if game:
             game.play_single_step()
-        return "Game not found", 204
+        else:
+            return "Game not found", 204

@@ -9,7 +9,7 @@ class ControlledPlayer(Player):
     def is_human(self):
         return False
 
-    def _choose_action(self, game_state: 'GameState') -> 'Action':
+    def _choose_action(self, game_state: 'GameState', verbose: bool = False) -> 'Action':
         raise NotImplemented("Controlled players need action determination from the outside.")
 
     def play(self, game_state: 'GameState', verbose: bool = False):
