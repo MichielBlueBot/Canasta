@@ -1,0 +1,9 @@
+$canvasBorder: 1px solid #000000;
+
+.hide {
+    display: None;
+}
+
+canvas {
+    border: $canvasBorder;
+}

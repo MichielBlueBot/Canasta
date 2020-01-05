@@ -65,8 +65,8 @@ class Card(object):
         else:
             return self.get_rank()
 
-    def _translate_rank_short(self) -> Union[int, str]:
-        """This is a hidden method that changes the card rank to a short
+    def translate_rank_short(self) -> Union[int, str]:
+        """Return a short version of the card rank
         human-readable string.
         :returns: human-readable string for face cards or card rank
         :rtype: str
@@ -91,7 +91,7 @@ class Card(object):
         :returns: human readable string representation of card object
         :rtype: str
         """
-        translated_rank = self._translate_rank_short()
+        translated_rank = self.translate_rank_short()
         if self.is_joker():
             return translated_rank
         else:
@@ -192,11 +192,11 @@ class Card(object):
                 return True
             elif other_suit == HEARTS:
                 return False
-            elif self_suit == DIAMONDS:
-                return True
-            elif other_suit == DIAMONDS:
-                return False
             elif self_suit == SPADES:
+                return True
+            elif other_suit == SPADES:
+                return False
+            elif self_suit == DIAMONDS:
                 return True
             else:
                 return False

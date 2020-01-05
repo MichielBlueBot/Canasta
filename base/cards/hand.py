@@ -22,3 +22,6 @@ class Hand(CardSet):
 
     def is_empty(self) -> bool:
         return len(self._cards) == 0
+
+    def sort(self, key=None, reverse=False):
+        self._cards.sort(key=key, reverse=reverse)

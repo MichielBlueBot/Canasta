@@ -31,7 +31,11 @@ class StateResource(Resource):
                  "numCards": player.num_cards(),
                  "hasGrabbedPile": player.has_grabbed_pile(),
                  "cards": [{"rank": card.get_rank(),
-                            "suit": card.get_suit()} for card in player.hand],
+                            "suit": card.get_suit(),
+                            "shortRank": card.translate_rank_short() if not card.is_joker() else "J",
+                            "shortSuit": card.get_suit()[0].upper(),
+                            "isJoker": card.is_joker()
+                            } for card in sorted(player.hand)],
                  }
                 for idx, player in enumerate(game_state.players)
             ],
