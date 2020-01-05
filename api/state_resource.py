@@ -10,6 +10,7 @@ from run.game_runner import GameRunner
 class StateResource(Resource):
 
     def get(self):
+        """Get the state (as JSON) of the game identified by the gameId parameter"""
         args = request.args
         game_id = args["gameId"]
         game = GameRunner().get_game(game_id)

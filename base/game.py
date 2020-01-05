@@ -62,6 +62,7 @@ class Game:
         return self.teams[self.current_team_idx]
 
     def play(self, verbose: bool = False):
+        """Play a game of canasta in a loop until it is finished."""
         if not self.initialized:
             raise Exception("Game not initialized")
         while not self.is_finished():
@@ -70,6 +71,18 @@ class Game:
                 print("Current player: {}".format(self.current_player_idx))
             self.players[self.current_player_idx].play(self.get_state(), verbose=verbose)
             self._next_player_turn()
+
+    def play_single_step(self, verbose: bool = False):
+        """Play a single action in a game of canasta."""
+        if not self.initialized:
+            raise Exception("Game not initialized")
+        if not self.is_finished():
+            if verbose:
+                self.print()
+                print("Current player: {}".format(self.current_player_idx))
+            self.players[self.current_player_idx].play_single_step(self.get_state(), verbose=verbose)
+            if self.board.phase == GamePhase.END_TURN_PHASE:
+                self._next_player_turn()
 
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""

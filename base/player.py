@@ -52,6 +52,12 @@ class Player(metaclass=ABCMeta):
                 print("Executing {}".format(action))
             action.execute(self, game_state.board)
 
+    def play_single_step(self, game_state: 'GameState', verbose: bool = False):
+        action = self._choose_action(game_state)
+        if verbose:
+            print("Executing {}".format(action))
+        action.execute(self, game_state.board)
+
     def deal(self, hand: Hand):
         self.hand = hand
 
