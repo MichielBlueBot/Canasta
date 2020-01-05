@@ -72,7 +72,7 @@ class Game extends React.Component {
         this.cardWidth = 75;
         this.cardHeight = 114;
         this.playerInfoHeight = 130;
-        this.playerInfoWidth = 200;
+        this.playerInfoWidth = 150;
         this.currentPlayerBarWidth = 30;
 
         // Bind functions so they can access 'this'
@@ -91,17 +91,18 @@ class Game extends React.Component {
     }
 
     updateCanvas() {
+        // get the canvas element using the DOM
+        var boardCtx = this.refs.boardCanvas.getContext('2d');
+        var redTeamSeriesCtx = this.refs.redTeamSeriesCanvas.getContext('2d');
+        var blueTeamSeriesCtx = this.refs.blueTeamSeriesCanvas.getContext('2d');
         if (this.props.state != null) {
-            this.renderPlayers(this.props.state.players);
+            this.renderPlayers(boardCtx, this.props.state.players);
+            this.renderTeamSeries(redTeamSeriesCtx, this.props.state.redTeamSeries);
+            this.renderTeamSeries(blueTeamSeriesCtx, this.props.state.blueTeamSeries);
         }
     }
 
-    renderPlayers(players){
-        // get the canvas element using the DOM
-        var canvas = this.refs.boardCanvas;
-
-        // use getContext to use the canvas for drawing
-        var ctx = canvas.getContext('2d');
+    renderPlayers(ctx, players){
         for (var playerIdx in players) {
             var player = players[playerIdx];
             var x = this.playerInfoWidth;
@@ -121,25 +122,52 @@ class Game extends React.Component {
     }
 
     renderPlayerCards(ctx, player, x, y) {
-        // Draw hand
-        const padding = 10;
-        var previousCardSuit = null;
-        var previousCardX = x;  // first card is rendered exactly at X
-        for (var cardIdx in player.cards){
-            var card = player.cards[cardIdx];
-            // Load card image to draw
-            var imgName = card.isJoker ?  "joker" : card.shortRank + "" + card.shortSuit;
-            var img = document.getElementById(imgName);
-            // Determine X-position to draw the card at
-            var cardX = previousCardX + (this.cardWidth/3);  // overlay cards of same suit slightly on top of each other
+        // Separate the cards in the players hand by suit, assuming they are ordered
+        var cardsBySuit = [];  // resulting List[List[card]] with lists of cards grouped by suit
+        var sameSuitCards = [];  // temporary list to hold cards of same suit while collecting them
+        var previousCardSuit = null;  // suit of the last seen card to know when we've collected them all
+        for (var card of player.cards) {
             if (card.suit != previousCardSuit) {  // Separate the cards by suit
-                if (previousCardSuit != null) {
-                    cardX += this.cardWidth;
+                if (sameSuitCards.length > 0) {
+                    // Add the cards collected so far to the result list and start a new list of cards for the new suit
+                    cardsBySuit.push(sameSuitCards)
+                    sameSuitCards = [];
                 }
                 previousCardSuit = card.suit;
             }
-            previousCardX = cardX;
-            ctx.drawImage(img, cardX, y, this.cardWidth, this.cardHeight);
+            sameSuitCards.push(card);
+        }
+        // Don't forget to add the set of cards for the last suit
+        if (sameSuitCards.length > 0) {
+            cardsBySuit.push(sameSuitCards)
+        }
+        this.renderMultipleCardSets(ctx, cardsBySuit, x, y);
+    }
+
+    renderMultipleCardSets(ctx, cardSets, x, y, padding=10) {
+        var cardX = x;  // first card is rendered exactly at X
+        for (var cardSet of cardSets){
+            for (var card of cardSet){
+                var img = this.cardToImg(card);
+                // Draw the card at the current location
+                ctx.drawImage(img, cardX, y, this.cardWidth, this.cardHeight);
+                // Move a small bit to the right, so cards in the same set are slightly overlaid over each other
+                cardX += (this.cardWidth/3);
+            }
+            // Add extra spacing between card sets
+            cardX += this.cardWidth * (3/4);
+        }
+    }
+
+    cardToImg(card) {
+        // Load card image to draw
+        var imgName = card.isJoker ?  "joker" : card.shortRank + "" + card.shortSuit;
+        return document.getElementById(imgName);
+    }
+
+    renderTeamSeries(ctx, teamSeries) {
+        for (series of teamSeries) {
+            this.renderMultipleCardSets(ctx, series);
         }
     }
 
@@ -147,10 +175,24 @@ class Game extends React.Component {
           return (
                      <div>
                          <GameStateText state={this.props.state}/>
-                         <canvas ref="boardCanvas" id="boardCanvas"
-                                 width={this.state.boardCanvasWidth+"px"}
-                                 height={this.state.boardCanvasHeight+"px"}>
-                         </canvas>
+                         <div className={styles.canvasContainer}>
+                            <div className={styles.canvasContainerLeft}>
+                                 <canvas ref="boardCanvas" id="boardCanvas"
+                                         width={this.state.boardCanvasWidth+"px"}
+                                         height={this.state.boardCanvasHeight+"px"}>
+                                 </canvas>
+                             </div>
+                             <div className={styles.canvasContainerRight}>
+                                 <canvas ref="redTeamSeriesCanvas" id="redTeamSeriesCanvas"
+                                     width={this.state.redTeamSeriesCanvasWidth+"px"}
+                                     height={this.state.redTeamSeriesCanvasHeight+"px"}>
+                                 </canvas>
+                                 <canvas ref="blueTeamSeriesCanvas" id="blueTeamSeriesCanvas"
+                                         width={this.state.blueTeamSeriesCanvasWidth+"px"}
+                                         height={this.state.blueTeamSeriesCanvasHeight+"px"}>
+                                 </canvas>
+                             </div>
+                         </div>
                          <img id="card_back" src={CARD_BACK} className={styles.hide}/>
                          <img id="2C" src={TWO_C} className={styles.hide}/>
                          <img id="2D" src={TWO_D} className={styles.hide}/>
@@ -225,5 +267,6 @@ function GameStateText(props) {
     }
     return null;
 }
+
 // Make this component available to other components
 export default Game;

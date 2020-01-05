@@ -1,9 +1,33 @@
-$canvasBorder: 1px solid #000000;
+$canvasBackground: #eee;
+$canvasBackgroundRed: #e4b9b9;
+$canvasBackgroundBlue: #9dc4e0;
 
 .hide {
     display: None;
 }
 
+.canvasContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.canvasContainerLeft {
+    width: 50%;
+}
+
+.canvasContainerRight {
+    width: 50%;
+}
+
 canvas {
-    border: $canvasBorder;
+    background: $canvasBackground;
+}
+
+#redTeamSeriesCanvas {
+    background: $canvasBackgroundRed;
+}
+
+#blueTeamSeriesCanvas {
+    background: $canvasBackgroundBlue;
 }

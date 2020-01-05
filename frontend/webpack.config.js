@@ -7,7 +7,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index_bundle.js',    // Filename of the generated JS bundle that contains all application JS code
-    publicPath: '/'                 // Base path for all assets within the application
   },
   devServer: {
     // redirect all server requests to /index.html which will download all the JS resources and
@@ -49,9 +48,10 @@ module.exports = {
     ]
   },
   plugins: [
+      // This plugin will generate a 'index.html' file in the dist folder when the project is built
+      // The template is our public 'index.html' page that includes the <div id='app'> for react to work
       new HtmlWebPackPlugin({
-         template: path.resolve( __dirname, 'public/index.html' ),
-         filename: 'index.html'
+         template: path.resolve('public', 'index.html' )
       })
    ]
 };

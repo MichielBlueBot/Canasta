@@ -48,5 +48,31 @@ class StateResource(Resource):
                          "numCards": game_state.board.left_pile.num_cards()},
 
             "rightPile": {"active": game_state.board.right_pile_active(),
-                          "numCards": game_state.board.right_pile.num_cards()}
+                          "numCards": game_state.board.right_pile.num_cards()},
+            "redTeamSeries": [
+                {
+                    "cards": [{"rank": card.get_rank(),
+                               "suit": card.get_suit(),
+                               "shortRank": card.translate_rank_short() if not card.is_joker() else "J",
+                               "shortSuit": card.get_suit()[0].upper(),
+                               "isJoker": card.is_joker()} for card in series.get_raw_cards()],
+                    "isDirty": series.is_dirty(),
+                    "isPure": series.is_pure(),
+                    "isFiveHundred": series.is_five_hundred(),
+                    "isThousand": series.is_thousand(),
+                } for series in game_state.board.red_team_series
+            ],
+            "blueTeamSeries": [
+                {
+                    "cards": [{"rank": card.get_rank(),
+                               "suit": card.get_suit(),
+                               "shortRank": card.translate_rank_short() if not card.is_joker() else "J",
+                               "shortSuit": card.get_suit()[0].upper(),
+                               "isJoker": card.is_joker()} for card in series.get_raw_cards()],
+                    "isDirty": series.is_dirty(),
+                    "isPure": series.is_pure(),
+                    "isFiveHundred": series.is_five_hundred(),
+                    "isThousand": series.is_thousand(),
+                } for series in game_state.board.blue_team_series
+            ]
         })
