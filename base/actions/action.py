@@ -49,7 +49,7 @@ class Action(metaclass=ABCMeta):
         """
         if self.is_executed:
             raise Exception("Cannot execute the same action twice!")
-        if not self.validate(player=player, board=board):
+        if not self.validate(player=player, board=board, verbose=True):
             raise Exception("Invalid action. \n {} \n {} \n {}".format(self, player, board))
         self._execute(player, board)
         self.is_executed = True
