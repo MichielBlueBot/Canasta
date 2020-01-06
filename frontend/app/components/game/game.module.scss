@@ -6,6 +6,10 @@ $canvasBackgroundBlue: #9dc4e0;
     display: None;
 }
 
+li {
+    list-style: none;
+}
+
 .flexContainer {
     display: flex;
     flex-direction: row;

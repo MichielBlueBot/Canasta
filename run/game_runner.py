@@ -1,6 +1,6 @@
 import random
 import string
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 from base.constants import Constants
 from base.game import Game
@@ -12,6 +12,9 @@ class GameRunner(metaclass=Singleton):
     def __init__(self):
         super().__init__()
         self.running_games = {}
+
+    def get_running_games(self) -> List[str]:
+        return list(self.running_games.keys())
 
     def start_game(self) -> Tuple[str, Game]:
         game_id = self.generate_new_game_id()

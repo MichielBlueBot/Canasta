@@ -331,7 +331,6 @@ function GameStateText(props) {
                   <ul>
                       <li>PHASE: {props.state.phase}</li>
                       <li>FINISHED: {props.state.isFinished.toString()}</li>
-                      <li>CURRENT PLAYER: {props.state.players[props.state.currentPlayerIndex].playerId}</li>
                       <li>DECK: {props.state.deck.numCards} cards</li>
                       <li>STACK: {props.state.stack.numCards} cards | top = ({topCard})</li>
                       <li>LEFT PILE: {props.state.leftPile.numCards} cards (active={props.state.leftPile.active.toString()})</li>

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Game from './components/game/Game';
+import styles from './app.module.scss';
 import axios from 'axios';
 
 class App extends React.Component {
@@ -10,21 +11,25 @@ class App extends React.Component {
         this.state = {
             state: null,
             gameId: null,
+            runningGames: [],
         };
 
         this.playLoopTimeout = null;
 
         // Bind functions so they can access 'this'
+        this.getGameIds = this.getGameIds.bind(this);
+        this.selectGame = this.selectGame.bind(this);
         this.newGame = this.newGame.bind(this);
         this.playStep = this.playStep.bind(this);
         this.updateState = this.updateState.bind(this);
         this.playLoop = this.playLoop.bind(this);
         this.stopLoop = this.stopLoop.bind(this);
+        this.quitGame = this.quitGame.bind(this);
     }
 
     componentDidMount() {
         // When we want to display this component, request our state from the backend
-        this.updateState();
+        this.getGameIds();
     }
 
     updateState() {
@@ -39,11 +44,23 @@ class App extends React.Component {
         }
     }
 
+    getGameIds() {
+        axios.get('http://localhost:4800/api/games')
+             .then((res) => {
+                this.setState({ runningGames: res.data });
+              }, (error) => {
+                console.log(error);
+              });
+    }
+
+    selectGame(gameId) {
+        this.setState({ gameId: gameId }, this.updateState);
+    }
+
     newGame() {
         axios.get('http://localhost:4800/api/game')
              .then((res) => {
-                this.setState({ gameId: res.data });
-                this.updateState();
+                this.setState({ gameId: res.data }, this.updateState);
               }, (error) => {
                 console.log(error);
               });
@@ -80,18 +97,39 @@ class App extends React.Component {
         }
     }
 
+    quitGame() {
+        this.setState({ state: null, gameId: null });
+        this.getGameIds();
+    }
+
     render() {
+        if (this.state.state != null) {
           return (
                   <div>
-                    <button onClick={this.newGame}>New game</button>
-                    <button onClick={this.playStep}>Play step</button>
-                    <button onClick={this.playLoop}>Play loop</button>
-                    <button onClick={this.stopLoop}>Stop loop</button>
-                    <br/>
-                    <Game state={this.state.state}></Game>
+                      <button onClick={this.newGame}>New game</button>
+                      <button onClick={this.playStep}>Play step</button>
+                      <button onClick={this.playLoop}>Play loop</button>
+                      <button onClick={this.stopLoop}>Stop loop</button>
+                      <button onClick={this.quitGame}>Quit game</button>
+                      <br/>
+                      <Game state={this.state.state}></Game>
                   </div>
                  )
+        } else {
+            const runningGameSelectors = [];
+            for (const [index, gameId] of this.state.runningGames.entries()) {
+                runningGameSelectors.push(<li key={index} className={styles.gameSelector} onClick={() => this.selectGame(gameId)}>Running game: {gameId}</li>)
+            }
+            return (
+                <div>
+                    <button onClick={this.newGame}>New game</button>
+                    <ul>
+                        {runningGameSelectors}
+                    </ul>
+                </div>
+            )
         }
+    }
 };
 
 ReactDOM.render(<App />, document.getElementById('app'));

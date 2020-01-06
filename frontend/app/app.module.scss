@@ -1,0 +1,38 @@
+body {
+    padding: 10px;
+}
+
+button {
+    cursor: pointer;
+    background-color: #008CBA; /* blue */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 2px;
+}
+
+button:hover {
+    background-color: #123456; /* dark blue */
+}
+
+ul {
+    padding-left: 0px;
+}
+
+li.gameSelector {
+    cursor: pointer;
+    line-height: 25px;
+    list-style: none;
+    margin: 5px;
+    padding-left: 5px;
+    border-left: 5px solid #aaa;
+}
+
+li.gameSelector:hover {
+    border-left: 5px solid #123456;
+    font-weight: bold;
+}
