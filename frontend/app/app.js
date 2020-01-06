@@ -106,9 +106,17 @@ class App extends React.Component {
     }
 
     render() {
+        const header = (
+            <div className={styles.header}>
+                <div className={styles.leftHeader}></div>
+                <div className={styles.middleHeader}></div>
+                <div className={styles.rightHeader}></div>
+            </div>
+        )
         if (this.state.state != null) {
           return (
                   <div>
+                      {header}
                       <button onClick={this.newGame}>New game</button>
                       <button onClick={this.playStep}>Play step</button>
                       <button disabled={this.looping} onClick={this.playLoop}>Play loop</button>
@@ -125,6 +133,7 @@ class App extends React.Component {
             }
             return (
                 <div>
+                    {header}
                     <button onClick={this.newGame}>New game</button>
                     <ul>
                         {runningGameSelectors}

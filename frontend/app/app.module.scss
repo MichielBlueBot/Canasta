@@ -2,6 +2,32 @@ body {
     padding: 10px;
 }
 
+.header {
+    display: flex;
+    width: 100%;
+    height: 390px;
+    margin-bottom: 10px;
+}
+
+.leftHeader {
+    flex: 0 1 100%;
+    background-image: url("../assets/images/canasta_header_left.png");
+    background-repeat: repeat; /* Do not repeat the image */
+}
+
+.middleHeader {
+    flex: 0 0 1021px;
+    background-image: url("../assets/images/canasta_header.png");
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.rightHeader {
+    flex: 0 1 100%;
+    background-image: url("../assets/images/canasta_header_right.png");
+    background-repeat: repeat; /* Do not repeat the image */
+}
+
 button {
     cursor: pointer;
     background-color: #008CBA; /* blue */
