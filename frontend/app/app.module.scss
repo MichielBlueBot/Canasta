@@ -19,6 +19,24 @@ button:hover {
     background-color: #123456; /* dark blue */
 }
 
+button:disabled {
+    background-color: #5d5d5d; /* grey */
+    cursor: default;
+}
+
+button.redButton {
+    background-color: #f44336; /* red */
+}
+
+button.redButton:hover {
+    background-color: #d20e00; /* dark red */
+}
+
+button.redButton:disabled {
+    background-color: #5d5d5d; /* grey */
+    cursor: default;
+}
+
 ul {
     padding-left: 0px;
 }

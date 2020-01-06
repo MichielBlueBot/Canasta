@@ -14,6 +14,7 @@ class App extends React.Component {
             runningGames: [],
         };
 
+        this.looping = false;
         this.playLoopTimeout = null;
 
         // Bind functions so they can access 'this'
@@ -79,10 +80,11 @@ class App extends React.Component {
 
     playLoop() {
         if (this.state.gameId != null) {
+            this.looping = true;
             axios.post('http://localhost:4800/api/game', { gameId: this.state.gameId })
               .then((res) => {
                 this.updateState();
-                if (!this.state.state.isFinished) {  // Stop looping when game is finished
+                if (!this.state.state.isFinished && this.looping) {  // Stop looping when game is finished
                     this.playLoopTimeout = setTimeout(this.playLoop, 100); // Call this function again after 50ms
                 }
               }, (error) => {
@@ -92,8 +94,9 @@ class App extends React.Component {
     }
 
     stopLoop() {
-        if (this.playLoopTimeout != null) {
+        if (this.looping) {
             clearTimeout(this.playLoopTimeout);
+            this.looping = false;
         }
     }
 
@@ -108,8 +111,8 @@ class App extends React.Component {
                   <div>
                       <button onClick={this.newGame}>New game</button>
                       <button onClick={this.playStep}>Play step</button>
-                      <button onClick={this.playLoop}>Play loop</button>
-                      <button onClick={this.stopLoop}>Stop loop</button>
+                      <button disabled={this.looping} onClick={this.playLoop}>Play loop</button>
+                      <button disabled={!this.looping} className={styles.redButton} onClick={this.stopLoop}>Stop loop</button>
                       <button onClick={this.quitGame}>Quit game</button>
                       <br/>
                       <Game state={this.state.state}></Game>
