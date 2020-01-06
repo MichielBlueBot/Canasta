@@ -3,7 +3,7 @@ import json
 from flask import request
 from flask_restful import Resource
 
-from base.game_state import GameState
+from base.game import Game
 from run.game_runner import GameRunner
 
 
@@ -15,20 +15,18 @@ class StateResource(Resource):
         game_id = args["gameId"]
         game = GameRunner().get_game(game_id)
         if game:
-            game_state = game.get_state()
-            is_finished = game.is_finished()
-            return self._game_state_to_json(game_state, is_finished)
+            return self.game_to_json(game)
         return "Game not found", 204
 
     @staticmethod
-    def _game_state_to_json(game_state: GameState, is_finished: bool) -> str:
+    def game_to_json(game: Game) -> str:
         return json.dumps(indent=2, obj={
-            "isFinished": is_finished,
-            "phase": game_state.board.phase.name,
-            "currentPlayerIndex": game_state.current_player_index,
+            "isFinished": game.is_finished(),
+            "phase": game.board.phase.name,
+            "currentPlayerIndex": game.current_player_index,
             "players": [
                 {"playerId": player.identifier,
-                 "isCurrentPlayer": idx == game_state.current_player_index,
+                 "isCurrentPlayer": idx == game.current_player_index,
                  "isHuman": player.is_human,
                  "teamColor": player.team_color.value,
                  "numCards": player.num_cards(),
@@ -40,19 +38,19 @@ class StateResource(Resource):
                             "isJoker": card.is_joker()
                             } for card in sorted(player.hand)],
                  }
-                for idx, player in enumerate(game_state.players)
+                for idx, player in enumerate(game.players)
             ],
-            "deck": {"numCards": game_state.board.deck.num_cards()},
-            "stack": {"numCards": game_state.board.stack.num_cards(),
-                      "topCard": {"rank": game_state.board.stack.look().get_rank(),
-                                  "suit": game_state.board.stack.look().get_suit()}
-                      if game_state.board.stack.num_cards() > 0 else None
+            "deck": {"numCards": game.board.deck.num_cards()},
+            "stack": {"numCards": game.board.stack.num_cards(),
+                      "topCard": {"rank": game.board.stack.look().get_rank(),
+                                  "suit": game.board.stack.look().get_suit()}
+                      if game.board.stack.num_cards() > 0 else None
                       },
-            "leftPile": {"active": game_state.board.left_pile_active(),
-                         "numCards": game_state.board.left_pile.num_cards() if game_state.board.left_pile_active() else 0},
+            "leftPile": {"active": game.board.left_pile_active(),
+                         "numCards": game.board.left_pile.num_cards() if game.board.left_pile_active() else 0},
 
-            "rightPile": {"active": game_state.board.right_pile_active(),
-                          "numCards": game_state.board.right_pile.num_cards() if game_state.board.right_pile_active() else 0},
+            "rightPile": {"active": game.board.right_pile_active(),
+                          "numCards": game.board.right_pile.num_cards() if game.board.right_pile_active() else 0},
             "redTeamSeries": [
                 {
                     "cards": [{"rank": card.get_rank(),
@@ -64,7 +62,7 @@ class StateResource(Resource):
                     "isPure": series.is_pure(),
                     "isFiveHundred": series.is_five_hundred(),
                     "isThousand": series.is_thousand(),
-                } for series in game_state.board.red_team_series
+                } for series in game.board.red_team_series
             ],
             "blueTeamSeries": [
                 {
@@ -77,8 +75,8 @@ class StateResource(Resource):
                     "isPure": series.is_pure(),
                     "isFiveHundred": series.is_five_hundred(),
                     "isThousand": series.is_thousand(),
-                } for series in game_state.board.blue_team_series
+                } for series in game.board.blue_team_series
             ],
-            "redTeamScore": game_state.red_team_score,
-            "blueTeamScore": game_state.blue_team_score,
+            "redTeamScore": game.get_red_team_score(),
+            "blueTeamScore": game.get_red_team_score(),
         })

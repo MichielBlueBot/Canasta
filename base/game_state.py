@@ -13,17 +13,16 @@ class GameState:
     The game state contains all necessary information for a player to determine the next action.
     """
 
-    SIZE = 20798  # Total number of integers required to represent the game state
+    SIZE = 20800  # Total number of integers required to represent the game state
 
-    def __init__(self, board: Board, players: List[Player], current_player_index: int,
-                 red_team_score: int, blue_team_score: int,
+    def __init__(self, board: Board, players: List[Player],
+                 current_player_index: int, current_team_index: int,
                  red_team_score_no_cards: int, blue_team_score_no_cards: int):
         self.board = board
         self.players = players
         self.current_player_index = current_player_index
-        self.red_team_score = red_team_score
+        self.current_team_index = current_team_index
         self.red_team_score_no_cards = red_team_score_no_cards
-        self.blue_team_score = blue_team_score
         self.blue_team_score_no_cards = blue_team_score_no_cards
 
     def create_numeral_representation(self, player: Player) -> List[int]:
@@ -34,6 +33,8 @@ class GameState:
         """
         representation = []
         representation.extend(self._own_player_index_representation(player=player))
+        representation.extend(self._current_player_representation())
+        representation.extend(self._current_team_representation())
         representation.extend(self._player_hand_representation(player=player))
         representation.extend(self._top_stack_card_representation())
         representation.extend(self._team_piles_taken_representation())
@@ -48,6 +49,12 @@ class GameState:
     @staticmethod
     def _own_player_index_representation(player: Player):
         return [player.identifier]
+
+    def _current_player_representation(self):
+        return [self.current_player_index]
+
+    def _current_team_representation(self):
+        return [self.current_team_index]
 
     @staticmethod
     def _player_hand_representation(player: Player):

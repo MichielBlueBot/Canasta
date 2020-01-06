@@ -11,8 +11,8 @@ class TestGame(TestCase):
         # CHECK PLAYERS AND TEAMS
         self.assertTrue(len(game.players), 4)
         self.assertTrue(len(game.teams) == 2)
-        self.assertTrue(game.current_team_idx == 0)
-        self.assertTrue(game.current_player_idx == 0)
+        self.assertTrue(game.current_team_index == 0)
+        self.assertTrue(game.current_player_index == 0)
         # CHECK PLAYER HANDS
         for player in game.players:
             self.assertTrue(player.num_cards() == 11)

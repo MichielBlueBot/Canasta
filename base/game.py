@@ -11,6 +11,7 @@ from base.cards.stack import Stack
 from base.constants import Constants
 from base.enums.game_phase import GamePhase
 from base.enums.team_color import TeamColor
+from base.game_history import GameHistory
 from base.game_state import GameState
 from base.human_player import HumanPlayer
 from base.player import Player
@@ -19,28 +20,32 @@ from base.team import Team
 
 class Game:
 
-    def __init__(self):
+    def __init__(self, keep_history: bool = True):
         self.players = None  # type: Optional[List[Player]]
         self.teams = None  # type: Optional[List[Team]]
-        self.current_player_idx = None
-        self.current_team_idx = None
+        self.current_player_index = None
+        self.current_team_index = None
         self.board = None  # type: Optional[Board]
+        self.keep_history = keep_history
+        self.history = GameHistory()
         self.initialized = False
 
-    def reset_game(self, initialize: bool = True):
+    def reset_game(self, initialize: bool = True, clear_history: bool = True):
         self.players = None  # type: Optional[List[Player]]
         self.teams = None  # type: Optional[List[Team]]
-        self.current_player_idx = None
-        self.current_team_idx = None
+        self.current_player_index = None
+        self.current_team_index = None
         self.board = None  # type: Optional[Board]
+        if clear_history:
+            self.history.clear()
         self.initialized = False
         if initialize:
             self.initialize_game()
 
     def initialize_game(self):
         if not self.initialized:
-            self.current_player_idx = 0
-            self.current_team_idx = 0
+            self.current_player_index = 0
+            self.current_team_index = 0
             # Initialize players
             self._initialize_players()
             # Create new deck
@@ -54,14 +59,16 @@ class Game:
             # Set up game phase
             self.board.set_phase(GamePhase.DRAW_PHASE)
             self.initialized = True
+            if self.keep_history:
+                self.history.add(self, None)
 
     @property
     def current_player(self) -> Player:
-        return self.players[self.current_player_idx]
+        return self.players[self.current_player_index]
 
     @property
     def current_team(self) -> Team:
-        return self.teams[self.current_team_idx]
+        return self.teams[self.current_team_index]
 
     @property
     def red_team(self) -> Optional[Team]:
@@ -75,17 +82,6 @@ class Game:
             return self.teams[1]
         return None
 
-    def play(self, verbose: bool = False):
-        """Play a game of canasta in a loop until it is finished."""
-        if not self.initialized:
-            raise Exception("Game not initialized")
-        while not self.is_finished():
-            if verbose:
-                self.print()
-                print("Current player: {}".format(self.current_player_idx))
-            self.players[self.current_player_idx].play(self.get_state(), verbose=verbose)
-            self._next_player_turn()
-
     def play_single_step(self, verbose: bool = False):
         """Play a single action in a game of canasta."""
         if not self.initialized:
@@ -93,15 +89,17 @@ class Game:
         if not self.is_finished():
             if verbose:
                 self.print()
-                print("Current player: {}".format(self.current_player_idx))
-            self.players[self.current_player_idx].play_single_step(self.get_state(), verbose=verbose)
+                print("Current player: {}".format(self.current_player_index))
+            action = self.players[self.current_player_index].play_single_step(self.get_state(), verbose=verbose)
+            if self.keep_history:
+                self.history.add(self, action)
             if self.board.phase == GamePhase.END_TURN_PHASE:
                 self._next_player_turn()
 
     def get_state(self) -> GameState:
         """Return the current GameState of this Board."""
-        return GameState(self.board, self.players, self.current_player_idx,
-                         self.get_red_team_score(), self.get_blue_team_score(),
+        return GameState(self.board, self.players,
+                         self.current_player_index, self.current_team_index,
                          self.get_red_team_score(include_opponent_cards=False),
                          self.get_blue_team_score(include_opponent_cards=False))
 
@@ -159,10 +157,10 @@ class Game:
 
     def _next_player_turn(self) -> None:
         """Increment the player and team counters to indicate it's now the next players turn."""
-        self.current_player_idx += 1
-        self.current_player_idx %= Constants.NUM_PLAYERS
-        self.current_team_idx += 1
-        self.current_team_idx %= Constants.NUM_TEAMS
+        self.current_player_index += 1
+        self.current_player_index %= Constants.NUM_PLAYERS
+        self.current_team_index += 1
+        self.current_team_index %= Constants.NUM_TEAMS
         self.board.set_phase(GamePhase.DRAW_PHASE)
 
     def _initialize_players(self) -> None:

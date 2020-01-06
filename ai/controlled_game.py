@@ -20,8 +20,8 @@ class ControlledGame(Game):
     def play_action(self, action: Action):
         if not self.initialized:
             raise Exception("Game not initialized")
-        print("Current player: {}".format(self.current_player_idx))
-        self.players[self.current_player_idx].play_action(game_state=self.get_state(), action=action)
+        print("Current player: {}".format(self.current_player_index))
+        self.players[self.current_player_index].play_action(game_state=self.get_state(), action=action)
 
     def switch_player_turns(self):
         self._next_player_turn()

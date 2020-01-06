@@ -44,19 +44,19 @@ class Player(metaclass=ABCMeta):
     def has_grabbed_pile(self):
         return self._pile_grabbed
 
-    def play(self, game_state: 'GameState', verbose: bool = False):
-        """Play a set of moves while it is this players turn based on the given GameState."""
-        while game_state.board.phase not in [GamePhase.END_TURN_PHASE]:
-            action = self._choose_action(game_state, verbose=verbose)
-            if verbose:
-                print("Executing {}".format(action))
-            action.execute(self, game_state.board)
-
     def play_single_step(self, game_state: 'GameState', verbose: bool = False):
+        """
+        Play a single move based on the given GameState.
+
+        :param game_state: the current state of the game
+        :param verbose: if True, print extra information to the console
+        :return: the action taken by the player
+        """
         action = self._choose_action(game_state, verbose=verbose)
         if verbose:
             print("Executing {}".format(action))
         action.execute(self, game_state.board)
+        return action
 
     def deal(self, hand: Hand):
         self.hand = hand

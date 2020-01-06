@@ -6,14 +6,46 @@ $canvasBackgroundBlue: #9dc4e0;
     display: None;
 }
 
-.canvasContainer {
+.flexContainer {
     display: flex;
     flex-direction: row;
     width: 100%;
 }
 
+.gameStateContainer {
+    flex: 0 1 50%;
+}
+
+.scoresContainer {
+    flex: 1 0 50%;
+    display: flex;
+}
+
+.redScoreContainer {
+    flex: 0 0 50%;
+}
+
+.blueScoreContainer{
+    flex: 0 0 50%;
+}
+
+.scoreText {
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center; /* horizontal center */
+    margin: auto;       /* vertical center */
+}
+
+.redText {
+    color: #b90000;
+}
+
+.blueText {
+    color: #0000af;
+}
+
 .canvasContainerLeft {
-    width: 50%;
+    flex: 0 0 50%;
 }
 
 .canvasContainerRight {

@@ -242,8 +242,12 @@ class Game extends React.Component {
     render() {
           return (
                      <div>
-                         <GameStateText state={this.props.state}/>
-                         <div className={styles.canvasContainer}>
+                         <div className={styles.flexContainer}>
+                            <GameStateText state={this.props.state}/>
+                            <GameScore state={this.props.state}/>
+                         </div>
+
+                         <div className={styles.flexContainer}>
                             <div className={styles.canvasContainerLeft}>
                                  <canvas ref="boardCanvas" id="boardCanvas"
                                          width={this.state.boardCanvasWidth+"px"}
@@ -323,18 +327,32 @@ class Game extends React.Component {
 function GameStateText(props) {
     if (props.state != null){
         var topCard = props.state.stack.topCard != null ? props.state.stack.topCard.rank + "" + props.state.stack.topCard.suit : "empty";
-        return (<div>
+        return (<div className={styles.gameStateContainer}>
                   <ul>
                       <li>PHASE: {props.state.phase}</li>
                       <li>FINISHED: {props.state.isFinished.toString()}</li>
-                      <li>RED TEAM SCORE: {props.state.redTeamScore}</li>
-                      <li>BLUE TEAM SCORE: {props.state.blueTeamScore}</li>
                       <li>CURRENT PLAYER: {props.state.players[props.state.currentPlayerIndex].playerId}</li>
                       <li>DECK: {props.state.deck.numCards} cards</li>
                       <li>STACK: {props.state.stack.numCards} cards | top = ({topCard})</li>
                       <li>LEFT PILE: {props.state.leftPile.numCards} cards (active={props.state.leftPile.active.toString()})</li>
                       <li>RIGHT PILE: {props.state.rightPile.numCards} cards (active={props.state.rightPile.active.toString()})</li>
                   </ul>
+                </div>);
+    }
+    return null;
+}
+
+function GameScore(props) {
+    if (props.state != null){
+        var redTeamScore = props.state.redTeamScore;
+        var blueTeamScore = props.state.blueTeamScore;
+        return (<div className={styles.scoresContainer}>
+                  <div className={[styles.redScoreContainer, styles.scoreText, styles.redText].join(" ")}>
+                    {redTeamScore} points
+                  </div>
+                  <div className={[styles.blueScoreContainer, styles.scoreText, styles.blueText].join(" ")}>
+                    {blueTeamScore} points
+                  </div>
                 </div>);
     }
     return null;
