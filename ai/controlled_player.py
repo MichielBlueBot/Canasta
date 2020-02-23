@@ -13,5 +13,4 @@ class ControlledPlayer(Player):
         raise NotImplemented("Controlled players need action determination from the outside.")
 
     def play_action(self, game_state: 'GameState', action: Action):
-        print("Executing {}".format(action))
         action.execute(self, game_state.board)

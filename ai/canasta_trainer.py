@@ -95,11 +95,13 @@ def play_game(env, train_net, target_net, epsilon, copy_step, print_exp_step):
     iteration = 0
     done = False
     observations = env.reset()
+    observations = np.array(observations, dtype=np.float32)
     while not done:
         actions_mask = env.get_current_actions_mask()
         action = train_net.get_action(observations, actions_mask, epsilon)
         prev_observations = observations
         observations, reward, done, _ = env.step(action)
+        observations = np.array(observations, dtype=np.float32)
         rewards += reward
         if done:
             reward = -200
@@ -111,8 +113,8 @@ def play_game(env, train_net, target_net, epsilon, copy_step, print_exp_step):
         iteration += 1
         if iteration % print_exp_step == 0:
             print("Experience replay:")
-            for exp_action in train_net.experience['a']:
-                print(ActionService().idx_to_action(exp_action))
+            for r, a in zip(train_net.experience['r'], train_net.experience['a']):
+                print(r, ActionService().idx_to_action(a))
         if iteration % copy_step == 0:
             target_net.copy_weights(train_net)
     return rewards
@@ -122,9 +124,11 @@ def main():
     env = CanastaEnv()
     gamma = 0.99
     copy_step = 25
-    print_exp_step = 100000000
+    print_exp_step = 100
     num_states = env.observation_space.n
     num_actions = env.action_space.n
+    print("NUM STATES = {}".format(num_states))
+    print("NUM ACTIONS = {}".format(num_actions))
     hidden_units = [200, 200]
     max_experiences = 10000
     min_experiences = 100

@@ -75,6 +75,7 @@ class Board:
     def __str__(self):
         print_str = ""
         print_str += "-------------------- BOARD ----------------------" + "\n"
+        print_str += "Phase: {}".format(self.phase) + "\n"
         print_str += "Left pile: {}".format(self.left_pile_active()) + "\n"
         print_str += "Right pile: {}".format(self.right_pile_active()) + "\n"
         print_str += "Deck: {} cards left".format(self.deck.num_cards()) + "\n"
